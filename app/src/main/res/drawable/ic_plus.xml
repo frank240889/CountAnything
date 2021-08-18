@@ -2,7 +2,8 @@
     android:width="16dp"
     android:height="16dp"
     android:viewportWidth="16"
-    android:viewportHeight="16">
+    android:viewportHeight="16"
+    android:tint="@color/orange">
   <path
       android:pathData="M7,0h2v16h-2z"
       android:fillColor="#ffffff"/>

@@ -6,4 +6,7 @@
     <dimen name="margin_normal_1">16dp</dimen>
     <dimen name="margin_normal_2">24dp</dimen>
     <dimen name="margin_normal_3">32dp</dimen>
+    <dimen name="no_width">0dp</dimen>
+    <dimen name="default_card_corner_radius">8dp</dimen>
+    <dimen name="max_elevation">16dp</dimen>
 </resources>
