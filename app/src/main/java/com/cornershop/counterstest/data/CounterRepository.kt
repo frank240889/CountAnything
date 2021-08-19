@@ -4,6 +4,7 @@ import com.cornershop.counterstest.common.toCounterEntity
 import com.cornershop.counterstest.data.local.CountersDatabase
 import com.cornershop.counterstest.data.remote.Api
 import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.domain.remote.Counter
 import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.domain.remote.CounterName
 import javax.inject.Inject
@@ -38,19 +39,14 @@ class CounterRepository @Inject constructor(
 
     fun counters() = db.countersDao().getCounters()
 
-    suspend fun increment(counterId: CounterId) = api.increment(counterId).let { counters ->
-        counters
-            .find {
-                it.id == counterId.id
-            }?.toCounterEntity()?.let {
-                db.countersDao().updateCounter(it)
-            }
-    }
+    suspend fun increment(counterId: CounterId) = findAndUpdate(api.increment(counterId), counterId.id)
 
-    suspend fun decrement(counterId: CounterId) = api.decrement(counterId).let { counters ->
+    suspend fun decrement(counterId: CounterId) = findAndUpdate(api.decrement(counterId), counterId.id)
+
+    private fun findAndUpdate(counters: List<Counter>, id: String) {
         counters
             .find {
-                it.id == counterId.id
+                it.id == id
             }?.toCounterEntity()?.let {
                 db.countersDao().updateCounter(it)
             }
