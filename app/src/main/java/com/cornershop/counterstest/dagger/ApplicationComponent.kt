@@ -9,7 +9,16 @@ import dagger.android.AndroidInjector
 
 @Component(
     modules =[
-        AndroidInjectionModule::class
+        AndroidInjectionModule::class,
+        ApplicationModule::class,
+        ActivityModule::class,
+        FragmentModule::class,
+        ApiModule::class,
+        CoroutineDispatcherModule::class,
+        ViewModelModule::class,
+        ResourceManagerModule::class,
+        StoreManagerModule::class,
+        LocalStorageModule::class
     ]
 )
 interface ApplicationComponent: AndroidInjector<CountAnythingApplication> {

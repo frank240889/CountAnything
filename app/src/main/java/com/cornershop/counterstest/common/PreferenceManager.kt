@@ -14,8 +14,8 @@ class PreferenceManager @Inject constructor(
     }
 
     override fun saveBoolean(key: String, value: Boolean) {
-        sharedPreferences.edit().putBoolean(key, value ).commit()
+        sharedPreferences.edit().putBoolean(key, value ).apply()
     }
 
-    override fun getBoolean(key: String) = sharedPreferences.getBoolean(key, false)
+    override fun getBoolean(key: String, defaultValue: Boolean) = sharedPreferences.getBoolean(key, defaultValue)
 }

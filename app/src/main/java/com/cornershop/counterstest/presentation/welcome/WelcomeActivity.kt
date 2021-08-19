@@ -1,12 +1,46 @@
 package com.cornershop.counterstest.presentation.welcome
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.cornershop.counterstest.R
+import androidx.lifecycle.ViewModelProvider
+import com.cornershop.counterstest.databinding.ActivityWelcomeBinding
+import com.cornershop.counterstest.presentation.BaseViewModelActivity
+import com.cornershop.counterstest.presentation.main.MainActivity
 
-class WelcomeActivity : AppCompatActivity() {
+class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
+
+    override val viewModel: WelcomeViewModel
+        get() = ViewModelProvider(
+            this,
+            viewModelFactory
+        )[WelcomeViewModel::class.java]
+
+    private lateinit var viewBinding: ActivityWelcomeBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
+        viewBinding = ActivityWelcomeBinding.inflate(layoutInflater).apply {
+            setContentView(this.root)
+        }
+
+        if (viewModel.shouldShowWelcomeScreen()) {
+            viewBinding.layoutActivityWelcomeContent.buttonStart.setOnClickListener {
+                viewModel.setShouldShowWelcomeScreen()
+                continueToMain()
+                finish()
+            }
+        }
+        else {
+            continueToMain()
+            finish()
+        }
     }
+
+    private fun getContinueIntent() = Intent(this, MainActivity::class.java)
+
+    private fun continueToMain() {
+        startActivity(getContinueIntent())
+    }
+
+
 }
