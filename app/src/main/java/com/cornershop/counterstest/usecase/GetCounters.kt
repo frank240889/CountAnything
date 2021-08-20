@@ -10,7 +10,7 @@ import com.cornershop.counterstest.domain.local.CounterEntity
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
-class Counters @Inject constructor(
+class GetCounters @Inject constructor(
     @CustomAnnotations.IODispatcher private val dispatcher: CoroutineDispatcher,
     private val counterRepository: CounterRepository,
     private val errorHandler: ErrorHandler

@@ -51,4 +51,12 @@ class CounterRepository @Inject constructor(
                 db.countersDao().updateCounter(it)
             }
     }
+
+    suspend fun search(title: String) = db.countersDao().search("%$title%")
+
+    suspend fun delete(counter: CounterEntity) {
+        api.delete(CounterId(counter.id)).let { counters ->
+            db.countersDao().delete(counter)
+        }
+    }
 }

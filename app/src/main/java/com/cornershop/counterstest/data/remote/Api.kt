@@ -3,10 +3,7 @@ package com.cornershop.counterstest.data.remote
 import com.cornershop.counterstest.domain.remote.Counter
 import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.domain.remote.CounterName
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface Api {
     @GET("/api/v1/counters")
@@ -24,4 +21,8 @@ interface Api {
     @POST("/api/v1/counter/dec")
     @Headers("Content-Type: application/json")
     suspend fun decrement(@Body counterId: CounterId): List<Counter>
+
+    @HTTP(method = "DELETE", path = "/api/v1/counter", hasBody = true)
+    @Headers("Content-Type: application/json")
+    suspend fun delete(@Body counterId: CounterId): List<Counter>
 }

@@ -6,8 +6,8 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "counter")
-data class CounterEntity(
-    @PrimaryKey
+data class PendingCounterEntity(
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: String,
     @ColumnInfo(name = "title")

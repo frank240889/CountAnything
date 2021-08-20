@@ -5,7 +5,9 @@
     android:id="@+id/cl_item_counter_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/margin_normal_1">
+    android:padding="@dimen/margin_normal_1"
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/tv_item_counter_title_counter"
@@ -63,5 +65,21 @@
             android:src="@drawable/ic_plus"
             tools:ignore="ContentDescription" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_item_counter_checked"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:layout_weight="0.4"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_counter_title_counter"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

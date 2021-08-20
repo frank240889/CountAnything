@@ -1,11 +1,8 @@
 package com.cornershop.counterstest.presentation.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.view.ViewGroup
+import android.view.*
+import android.view.View.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +12,7 @@ import com.cornershop.counterstest.databinding.MainFragmentBinding
 import com.cornershop.counterstest.domain.local.CounterEntity
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterFragment
+import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
 
 class MainFragment : BaseViewModelFragment<MainViewModel>() {
 
@@ -22,6 +20,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         fun newInstance() = MainFragment()
     }
 
+    private var actionMode: ActionMode? = null
     override val viewModel: MainViewModel
         get() = ViewModelProvider(
             this,
@@ -33,9 +32,37 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     private val binding get() = _binding!!
 
     private val countersAdapter: CounterAdapter by lazy {
-        CounterAdapter { action, counter ->
-            viewModel.performAction(action, counter)
+        CounterAdapter (
+            { action, counter ->
+                viewModel.performAction(action, counter)
+            },
+            { action, counter ->
+                requireActivity().startActionMode(actionModeCallback)
+                viewModel.performAction(action, counter)
+                counter.checked = counter.checked.not()
+            }
+        )
+    }
+
+
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            // Inflate a menu resource providing context menu items
+            val inflater: MenuInflater = mode.menuInflater
+            inflater.inflate(R.menu.main_menu, menu)
+            setActionModeOn()
+            return true
         }
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false // Return false if nothing is done
+
+        // Called when the user selects a contextual menu item
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem) =
+            handleActionMode(mode, item)
+
+        // Called when the user exits the action mode
+        override fun onDestroyActionMode(mode: ActionMode) = setActionModeOff()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,28 +111,56 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     }
 
     private fun addObservers() {
-        viewModel.observeCounters().observe(this) { state ->
-            when (state) {
-                is State.Success -> {
-                    hideError()
-                    showLoading(false)
-                    processCounters(state.value)
+        viewModel.apply {
+            counters.observe(this@MainFragment) { state ->
+                when (state) {
+                    is State.Success -> {
+                        hideError()
+                        showLoading(false)
+                        processCounters(state.value)
+                    }
+                    is State.Error -> {
+                        showLoading(false)
+                        showError()
+                    }
+                    is State.Loading -> {
+                        hideError()
+                        showLoading(state.loading)
+                    }
                 }
-                is State.Error -> {
-                    showLoading(false)
-                    showError()
-                }
-                is State.Loading -> {
-                    hideError()
-                    showLoading(state.loading)
+            }
+
+            observeDeletionCounters().observe(this@MainFragment) { state ->
+                when (state) {
+                    is State.Success<*> -> {
+                        showLoading(false)
+                    }
+                    is State.Error -> {
+                        showLoading(false)
+                        showDeletionError(state.message)
+                    }
+                    is State.Loading -> {
+                        showLoading(state.loading)
+                    }
                 }
             }
         }
     }
 
+    private fun showDeletionError(message: String) {
+        InformativeDialogFragment
+            .newInstance(
+                title = getString(R.string.error_deleting_counter_title),
+                message = message,
+                positiveButtonText = getString(R.string.ok)
+            )
+            .show(childFragmentManager, InformativeDialogFragment::class.java.name)
+    }
+
     private fun processCounters(counters: List<CounterEntity>) {
         if (counters.isEmpty()) {
-            showNoCounter()
+            actionMode?.finish()
+            showNoCounterMessage()
         }
         else {
             hideNoCounters()
@@ -121,7 +176,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         binding.llMainFragmentNoCountersMessageContainer.visibility = GONE
     }
 
-    private fun showNoCounter() {
+    private fun showNoCounterMessage() {
         binding.llMainFragmentNoCountersMessageContainer.visibility = VISIBLE
     }
 
@@ -129,4 +184,59 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         binding.llMainFragmentNoCountersMessageContainer.visibility = GONE
     }
 
+    private fun confirmDelete() {
+        viewModel.getCountersName().let { names ->
+
+            InformativeDialogFragment
+                .newInstance(
+                    message = getString(R.string.delete_x_question, names),
+                    positiveButtonText = getString(R.string.delete),
+                    negativeButtonText = getString(R.string.cancel)
+                ).apply {
+                    setCallback(object : InformativeDialogFragment.OnButtonPressed {
+                        override fun onPositive() {
+                            viewModel.delete()
+                        }
+
+                        override fun onNegative() {
+                            actionMode?.finish()
+                        }
+                    })
+                }
+                .show(childFragmentManager, InformativeDialogFragment::class.java.name)
+        }
+    }
+
+    private fun setActionModeOn() {
+        countersAdapter.onActionMode(true)
+        binding.apply {
+            mcvMainFragmentSearchContainer.visibility = INVISIBLE
+            efabMainFragmentAddCounter.hide()
+        }
+    }
+
+    private fun setActionModeOff() {
+        actionMode = null
+        countersAdapter.onActionMode(false)
+        binding.apply {
+            mcvMainFragmentSearchContainer.visibility = VISIBLE
+            efabMainFragmentAddCounter.show()
+        }
+        viewModel.clearDeletionList()
+    }
+
+    private fun handleActionMode(mode: ActionMode, item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_action_share -> {
+                //shareCurrentItem()
+                mode.finish() // Action picked, so close the CAB
+                true
+            }
+            R.id.menu_action_delete -> {
+                confirmDelete()
+                false
+            }
+            else -> false
+        }
+    }
 }

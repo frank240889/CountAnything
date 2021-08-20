@@ -7,6 +7,48 @@
     android:layout_height="match_parent"
     tools:context=".presentation.main.MainFragment">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_main_fragment_search_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/margin_normal_1"
+        android:layout_marginEnd="@dimen/margin_normal_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_main_fragment_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_search"
+                android:layout_marginStart="@dimen/margin_normal_1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_main_fragment_search_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/search_counters"
+                android:layout_marginStart="@dimen/margin_normal_2"
+                android:textSize="@dimen/text_size_normal"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_main_fragment_search"
+                app:layout_constraintStart_toEndOf="@+id/iv_main_fragment_search"
+                app:layout_constraintTop_toTopOf="@+id/iv_main_fragment_search" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
     <TextView
         android:id="@+id/tv_main_fragment_header"
         style="@style/TextAppearance.AppCompat.Body1"
@@ -29,36 +71,6 @@
         tools:listitem="@layout/item_counter"
         android:paddingBottom="@dimen/margin_normal_3"
         android:clipToPadding="false"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mcv_main_fragment_search_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_normal_1"
-        android:layout_marginStart="@dimen/margin_normal_1"
-        android:layout_marginEnd="@dimen/margin_normal_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cardCornerRadius="@dimen/default_card_corner_radius">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_main_fragment_search_label"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/search_counters"
-            android:labelFor="@id/tiet_main_fragment_search_input"
-            app:boxStrokeWidth="@dimen/no_width"
-            app:boxStrokeWidthFocused="@dimen/no_width"
-            app:startIconDrawable="@drawable/ic_search"
-            android:layout_gravity="center">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_main_fragment_search_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
         android:id="@+id/ll_main_fragment_no_counters_message_container"

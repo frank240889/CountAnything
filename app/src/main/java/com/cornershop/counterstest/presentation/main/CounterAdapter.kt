@@ -1,10 +1,15 @@
 package com.cornershop.counterstest.presentation.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -13,7 +18,9 @@ import com.cornershop.counterstest.R
 import com.cornershop.counterstest.domain.local.CounterEntity
 
 class CounterAdapter(
-    private val listener: (Action, CounterEntity) -> Unit
+    private val onClickListener: (Action, CounterEntity) -> Unit,
+    private val onLongClickListener: (Action, CounterEntity) -> Unit
+
 ): RecyclerView.Adapter<CounterAdapter.CounterViewHolder>() {
 
     companion object {
@@ -38,10 +45,12 @@ class CounterAdapter(
 
         enum class Action {
             INCREMENT,
-            DECREMENT
+            DECREMENT,
+            DELETE
         }
     }
 
+    private var actionMode: Boolean = false
     private val diffUtil: AsyncListDiffer<CounterEntity> = AsyncListDiffer(this, DIFF_CALLBACK)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -79,26 +88,66 @@ class CounterAdapter(
         }
     }
 
-    inner class CounterViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    fun onActionMode(actionMode: Boolean) {
+        this.actionMode = actionMode
+        diffUtil.currentList.forEachIndexed { index, counterEntity ->
+            if (!actionMode) {
+                counterEntity.checked = actionMode
+            }
+            notifyItemChanged(index)
+        }
+    }
+
+
+    inner class CounterViewHolder(
+        itemView: View
+    ): RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         private val tvTitle: TextView = itemView.findViewById(R.id.tv_item_counter_title_counter)
         private val tvCounter: TextView = itemView.findViewById(R.id.tv_item_counter_counter_marker)
         private val ibIncrement: ImageButton = itemView.findViewById(R.id.ib_item_counter_increment_counter)
         private val ibDecrement: ImageButton = itemView.findViewById(R.id.ib_item_counter_decrement_counter)
+        private val llButtonsContainer: LinearLayout = itemView.findViewById(R.id.ll_item_counter_buttons_counter_container)
+        private val ivCheckedView: ImageView = itemView.findViewById(R.id.iv_item_counter_checked)
 
         init {
             ibDecrement.setOnClickListener(this)
             ibIncrement.setOnClickListener(this)
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
         }
 
         fun bind(counter: CounterEntity) {
             tvTitle.text = counter.title
             tvCounter.text = counter.count.toString()
+
+            if (actionMode) {
+                llButtonsContainer.visibility = INVISIBLE
+                    if (counter.checked) {
+                        ivCheckedView.visibility = VISIBLE
+                    } else {
+                        ivCheckedView.visibility = INVISIBLE
+                    }
+            }
+            else {
+                llButtonsContainer.visibility = VISIBLE
+                ivCheckedView.visibility = INVISIBLE
+            }
         }
 
         override fun onClick(v: View?) {
-            when (v?.id) {
-                R.id.ib_item_counter_increment_counter -> listener.invoke(Action.INCREMENT, diffUtil.currentList[adapterPosition])
-                R.id.ib_item_counter_decrement_counter -> listener.invoke(Action.DECREMENT, diffUtil.currentList[adapterPosition])
+            if (actionMode) {
+                diffUtil.currentList[adapterPosition].let {
+                    it.checked = it.checked.not()
+                    notifyItemChanged(adapterPosition)
+                }
+                onClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
+            }
+            else {
+                when (v?.id) {
+                    R.id.ib_item_counter_increment_counter -> onClickListener.invoke(Action.INCREMENT, diffUtil.currentList[adapterPosition])
+                    R.id.ib_item_counter_decrement_counter -> onClickListener.invoke(Action.DECREMENT, diffUtil.currentList[adapterPosition])
+                    else -> Log.d(CounterAdapter::class.java.name, "Cannot handle click for view ${v?.id}")
+                }
             }
         }
 
@@ -106,6 +155,12 @@ class CounterAdapter(
             bundle["count"]?.let { count ->
                 tvCounter.text = count.toString()
             }
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            onLongClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
+            notifyItemChanged(adapterPosition)
+            return true
         }
     }
 }

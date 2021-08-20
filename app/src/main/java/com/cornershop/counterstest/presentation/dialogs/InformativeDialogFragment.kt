@@ -59,11 +59,13 @@ class InformativeDialogFragment: DialogFragment() {
 
                 if (negativeButtonText.isNotEmpty() || negativeButtonText.isNotBlank()) {
                     setNegativeButton(negativeButtonText) { _, _ ->
+                        dismiss()
                         callback?.onNegative()
                     }
                 }
 
                 setPositiveButton(positiveButtonText) { _, _ ->
+                    dismiss()
                     callback?.onPositive()
                 }
 
@@ -83,7 +85,7 @@ class InformativeDialogFragment: DialogFragment() {
     }
 
     interface OnButtonPressed {
-        fun onPositive()
-        fun onNegative()
+        fun onPositive(){}
+        fun onNegative(){}
     }
 }

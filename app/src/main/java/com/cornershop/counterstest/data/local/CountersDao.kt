@@ -16,7 +16,13 @@ abstract class CountersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertCounters(counterEntity: List<CounterEntity>)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     abstract fun updateCounter(counterEntity: CounterEntity)
+
+    @Delete
+    abstract fun delete(counterEntity: CounterEntity)
+
+    @Query("SELECT * FROM counter WHERE counter.title like :query")
+    abstract suspend fun search(query: String): List<CounterEntity>
 
 }
