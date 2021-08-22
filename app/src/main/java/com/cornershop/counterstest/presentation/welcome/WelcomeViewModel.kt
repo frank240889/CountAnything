@@ -11,6 +11,6 @@ class WelcomeViewModel @Inject constructor(
         const val SHOW_WELCOME_SCREEN = "show_welcome_screen"
     }
 
-    fun shouldShowWelcomeScreen() = true//storeManager.getBoolean(SHOW_WELCOME_SCREEN)
-    fun setShouldShowWelcomeScreen() = storeManager.saveBoolean(SHOW_WELCOME_SCREEN, false)
+    fun skipWelcomeScreen() = storeManager.getBoolean(SHOW_WELCOME_SCREEN)
+    fun setSkipWelcomeScreen() = storeManager.saveBoolean(SHOW_WELCOME_SCREEN, true)
 }

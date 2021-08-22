@@ -28,4 +28,6 @@ abstract class BaseViewModelFragment<VM: ViewModel> : Fragment(), HasAndroidInje
     override fun androidInjector(): AndroidInjector<Any> = injector
 
     open fun showLoading(loading: Boolean) {}
+
+    abstract fun provideViewModel(): VM
 }

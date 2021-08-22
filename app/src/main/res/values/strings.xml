@@ -1,16 +1,19 @@
 <resources>
     <!-- Examples -->
+    <string name="topic_1">Drinks</string>
     <string-array name="drinks_array">
         <item>Cups of coffee</item>
         <item>Glasses of water</item>
         <item>Tequila shots</item>
         <item>Caipirinhas</item>
     </string-array>
+    <string name="topic_2">Food</string>
     <string-array name="food_array">
         <item>Hot-dogs</item>
         <item>Cupcakes eaten</item>
         <item>Chicken sandwich</item>
     </string-array>
+    <string name="topic_3">Misc</string>
     <string-array name="misc_array">
         <item>Times sneezed</item>
         <item>Naps</item>
@@ -49,9 +52,10 @@
     <string name="create_counter">Create counter</string>
     <string name="counter_name_label">Name</string>
     <string name="counter_name_hint">Cups of coffee</string>
-    <string name="create_counter_disclaimer">Give it a name. Creative block? See examples.</string>
+    <string name="create_counter_disclaimer">Give it a name. Creative block? See <b><u>examples</u></b>.</string>
     <string name="delete_x_question">Delete "%s"?</string>
     <string name="n_per_counter_name">%d × %s</string>
     <string name="invalid_title_counter">Invalid title counter</string>
     <string name="allowed_chars">"0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ,-_ "</string>
+    <string name="synced_data">Data successful synced</string>
 </resources>

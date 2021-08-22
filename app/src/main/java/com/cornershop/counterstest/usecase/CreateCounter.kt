@@ -42,7 +42,7 @@ class CreateCounter @Inject constructor(
         if (counterValidator.isTitleValid(counterTitle)) {
             job = coroutineScope.launch(dispatcher) {
                 _response.postValue(State.Loading(true))
-                counterRepository.createCounter(CounterName(counterTitle!!))
+                counterRepository.createLocalCounter(CounterName(counterTitle!!))
                 _response.postValue(State.Success(Unit))
             }
         }

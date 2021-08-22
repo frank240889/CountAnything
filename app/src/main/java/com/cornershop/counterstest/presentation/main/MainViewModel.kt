@@ -5,7 +5,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.domain.local.CounterEntity
-import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.usecase.*
 import javax.inject.Inject
 
@@ -14,7 +13,8 @@ class MainViewModel @Inject constructor(
     private val incrementCounter: IncrementCounter,
     private val decrementCounter: DecrementCounter,
     private val searchCounter: SearchCounter,
-    private val deleteCounter: DeleteCounter
+    private val deleteCounter: DeleteCounter,
+    private val syncCounters: SyncCounters
 ): ViewModel() {
 
     private val _counters: MediatorLiveData<State<List<CounterEntity>>> by lazy {
@@ -29,23 +29,37 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun performAction(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
-        if(action == CounterAdapter.Companion.Action.INCREMENT) {
-            incrementCounter(counter)
-        }
-        else if (action == CounterAdapter.Companion.Action.DECREMENT) {
-            decrementCounter(counter)
-        }
-        else{
-            addForDeletion(counter)
-        }
+    override fun onCleared() {
+        releaseUseCases()
     }
-
-    fun observeCounters() = getCounters.counters
 
     fun observeDeletionCounters() = deleteCounter.response
 
-    fun getCounters() = getCounters.execute()
+    fun observeSyncCounters() = syncCounters.response
+
+    fun fetchCounters() = getCounters.execute()
+
+    fun performAction(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
+        when (action) {
+            CounterAdapter.Companion.Action.INCREMENT -> {
+                incrementCounter(counter)
+            }
+            CounterAdapter.Companion.Action.DECREMENT -> {
+                decrementCounter(counter)
+            }
+            else -> {
+                addForDeletion(counter)
+            }
+        }
+    }
+
+    fun delete() = deleteCounter.execute()
+
+    fun clearDeletionList() = deleteCounter.clearDeletionList()
+
+    fun getCountersName() = deleteCounter.getCountersName()
+
+    fun syncCounters() = syncCounters.execute()
 
     fun onActiveSearch() {
         _counters.removeSource(getCounters.counters)
@@ -66,30 +80,28 @@ class MainViewModel @Inject constructor(
         searchCounter.execute()
     }
 
-    fun delete() = deleteCounter.execute()
-
-    fun clearDeletionList() = deleteCounter.clearDeletionList()
 
     private fun incrementCounter(counter: CounterEntity) {
-        CounterId(counter.id).let { counterId ->
-            incrementCounter.counterId = counterId
-            incrementCounter.execute()
-        }
+        incrementCounter.counterEntity = counter
+        incrementCounter.execute()
     }
 
     private fun decrementCounter(counter: CounterEntity) {
         if (counter.count == 0) return
 
-        CounterId(counter.id).let { counterId ->
-            decrementCounter.counterId = counterId
-            decrementCounter.execute()
-        }
+        decrementCounter.counterEntity = counter
+        decrementCounter.execute()
     }
 
     private fun addForDeletion(counter: CounterEntity) {
         deleteCounter.addToDelete(counter)
     }
 
-    fun getCountersName() = deleteCounter.getCountersName()
-
+    private fun releaseUseCases() {
+        getCounters.release()
+        incrementCounter.release()
+        decrementCounter.release()
+        searchCounter.release()
+        deleteCounter.release()
+    }
 }

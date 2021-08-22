@@ -1,6 +1,9 @@
 package com.cornershop.counterstest.presentation.createcounter
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -22,7 +25,7 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
     }
 
     override val viewModel: CreateCounterViewModel by lazy {
-        obtainViewModel()
+        provideViewModel()
     }
 
     private var _viewBinding: CreateCounterFragmentBinding? = null
@@ -48,6 +51,18 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupListeners()
+        setStyleSuggest()
+    }
+
+    private fun setStyleSuggest() {
+        val text = SpannableString(getString(R.string.create_counter_disclaimer)).apply {
+            setSpan(object: ClickableSpan() {
+                override fun onClick(widget: View) {
+
+                }
+            },length - 8, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        viewBinding.tvCreateCounterFragmentSuggestCounterName.text = text
     }
 
     private fun setupListeners() {
@@ -88,7 +103,7 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
 
     }
 
-    private fun obtainViewModel() = ViewModelProvider(
+    override fun provideViewModel() = ViewModelProvider(
         this,
         viewModelFactory
     )[CreateCounterViewModel::class.java]

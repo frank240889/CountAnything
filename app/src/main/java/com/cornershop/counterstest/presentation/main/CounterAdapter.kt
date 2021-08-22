@@ -7,8 +7,8 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -107,7 +107,7 @@ class CounterAdapter(
         private val ibIncrement: ImageButton = itemView.findViewById(R.id.ib_item_counter_increment_counter)
         private val ibDecrement: ImageButton = itemView.findViewById(R.id.ib_item_counter_decrement_counter)
         private val llButtonsContainer: LinearLayout = itemView.findViewById(R.id.ll_item_counter_buttons_counter_container)
-        private val ivCheckedView: ImageView = itemView.findViewById(R.id.iv_item_counter_checked)
+        private val flSelectedLayer: FrameLayout = itemView.findViewById(R.id.fl_item_counter_selected_layer)
 
         init {
             ibDecrement.setOnClickListener(this)
@@ -123,14 +123,14 @@ class CounterAdapter(
             if (actionMode) {
                 llButtonsContainer.visibility = INVISIBLE
                     if (counter.checked) {
-                        ivCheckedView.visibility = VISIBLE
+                        flSelectedLayer.visibility = VISIBLE
                     } else {
-                        ivCheckedView.visibility = INVISIBLE
+                        flSelectedLayer.visibility = INVISIBLE
                     }
             }
             else {
                 llButtonsContainer.visibility = VISIBLE
-                ivCheckedView.visibility = INVISIBLE
+                flSelectedLayer.visibility = INVISIBLE
             }
         }
 
@@ -158,8 +158,10 @@ class CounterAdapter(
         }
 
         override fun onLongClick(v: View?): Boolean {
-            onLongClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
-            notifyItemChanged(adapterPosition)
+            if (!actionMode) {
+                onLongClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
+                notifyItemChanged(adapterPosition)
+            }
             return true
         }
     }

@@ -27,9 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'URL_API', '\"http://10.0.2.2:3000\"'
+            debuggable = true
         }
         debug {
             buildConfigField 'String', 'URL_API', '\"http://10.0.2.2:3000\"'
+            debuggable = true
         }
     }
     compileOptions {

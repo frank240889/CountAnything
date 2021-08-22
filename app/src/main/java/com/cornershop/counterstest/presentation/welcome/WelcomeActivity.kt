@@ -23,9 +23,9 @@ class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
             setContentView(this.root)
         }
 
-        if (viewModel.shouldShowWelcomeScreen()) {
+        if (!viewModel.skipWelcomeScreen()) {
             viewBinding.layoutActivityWelcomeContent.buttonStart.setOnClickListener {
-                viewModel.setShouldShowWelcomeScreen()
+                viewModel.setSkipWelcomeScreen()
                 continueToMain()
                 finish()
             }

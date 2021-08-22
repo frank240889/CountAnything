@@ -8,11 +8,11 @@ import retrofit2.http.*
 interface Api {
     @GET("/api/v1/counters")
     @Headers("Content-Type: application/json")
-    suspend fun counters(): List<Counter>
+    suspend fun getAllRemoteCounters(): List<Counter>
 
     @POST("/api/v1/counter")
     @Headers("Content-Type: application/json")
-    suspend fun create(@Body counterName: CounterName): List<Counter>
+    suspend fun createRemoteCounter(@Body counterName: CounterName): List<Counter>
 
     @POST("/api/v1/counter/inc")
     @Headers("Content-Type: application/json")
@@ -24,5 +24,5 @@ interface Api {
 
     @HTTP(method = "DELETE", path = "/api/v1/counter", hasBody = true)
     @Headers("Content-Type: application/json")
-    suspend fun delete(@Body counterId: CounterId): List<Counter>
+    suspend fun deleteRemoteCounter(@Body counterId: CounterId): List<Counter>
 }

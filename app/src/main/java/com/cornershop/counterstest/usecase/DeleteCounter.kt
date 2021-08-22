@@ -41,7 +41,7 @@ class DeleteCounter @Inject constructor(
         job = coroutineScope.launch(dispatcher) {
             _response.postValue(State.Loading(true))
             countersToDelete.forEach { counterEntity ->
-                counterRepository.delete(counterEntity)
+                counterRepository.deleteCounter(counterEntity)
             }
             _response.postValue(State.Success(Unit))
         }

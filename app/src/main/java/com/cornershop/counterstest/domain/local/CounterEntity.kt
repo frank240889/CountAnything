@@ -13,7 +13,9 @@ data class CounterEntity(
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "count")
-    val count: Int
+    val count: Int,
+    @ColumnInfo(name = "pending_to_update")
+    val pendingUpdate: Boolean = false
 ){
     @Ignore
     var checked: Boolean = false

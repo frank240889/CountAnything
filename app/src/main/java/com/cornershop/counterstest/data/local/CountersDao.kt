@@ -8,21 +8,24 @@ import com.cornershop.counterstest.domain.local.CounterEntity
 abstract class CountersDao {
 
     @Query("SELECT * FROM counter")
-    abstract fun getCounters(): LiveData<List<CounterEntity>>
+    abstract fun getLocalCountersObservable(): LiveData<List<CounterEntity>>
 
     @Query("SELECT COUNT(*) FROM counter")
     abstract suspend fun count(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertCounters(counterEntity: List<CounterEntity>)
 
     @Update
-    abstract fun updateCounter(counterEntity: CounterEntity)
+    abstract fun updateCounter(counterEntity: CounterEntity): Int
 
     @Delete
     abstract fun delete(counterEntity: CounterEntity)
 
     @Query("SELECT * FROM counter WHERE counter.title like :query")
-    abstract suspend fun search(query: String): List<CounterEntity>
+    abstract suspend fun searchCounter(query: String): List<CounterEntity>
+
+    @Query("SELECT * FROM counter WHERE pending_to_update = 1")
+    abstract suspend fun getCountersPendingToUpdate(): List<CounterEntity>
 
 }

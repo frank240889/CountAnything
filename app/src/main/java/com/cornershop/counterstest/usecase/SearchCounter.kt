@@ -37,10 +37,9 @@ class SearchCounter @Inject constructor(
         if (validator.isTitleValid(title)) {
             job = coroutineScope.launch {
                 _searchResults.postValue(State.Loading(true))
-                counterRepository.search(title!!).let { results ->
+                counterRepository.searchCounter(title!!).let { results ->
                     _searchResults.postValue(State.Success(results))
                 }
-                _searchResults.postValue(State.Loading(false))
             }
         }
     }

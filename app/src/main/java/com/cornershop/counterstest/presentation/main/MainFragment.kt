@@ -1,8 +1,13 @@
 package com.cornershop.counterstest.presentation.main
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.*
 import android.view.View.*
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,9 +15,12 @@ import com.cornershop.counterstest.R
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.databinding.MainFragmentBinding
 import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.network.AndroidNetworkChecker
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
+import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 class MainFragment : BaseViewModelFragment<MainViewModel>() {
 
@@ -20,12 +28,21 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         fun newInstance() = MainFragment()
     }
 
-    private var actionMode: ActionMode? = null
+    @Inject
+    lateinit var androidNetworkChecker: AndroidNetworkChecker
+
     override val viewModel: MainViewModel
-        get() = ViewModelProvider(
-            this,
-            viewModelFactory
-        )[MainViewModel::class.java]
+        get() = provideViewModel()
+
+    private var actionMode: ActionMode? = null
+
+    private val networkCheckerObserver: Observer<Boolean> by lazy {
+        Observer<Boolean> { connected ->
+            if (connected) {
+                viewModel.syncCounters()
+            }
+        }
+    }
 
     private var _binding: MainFragmentBinding? = null
 
@@ -37,44 +54,36 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                 viewModel.performAction(action, counter)
             },
             { action, counter ->
-                requireActivity().startActionMode(actionModeCallback)
-                viewModel.performAction(action, counter)
-                counter.checked = counter.checked.not()
+                handleOnLongClick(action, counter)
             }
         )
     }
 
+    private val actionModeCallback: ActionMode.Callback by lazy {
+        object : ActionMode.Callback {
+            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                // Inflate a menu resource providing context menu items
+                val inflater: MenuInflater = mode.menuInflater
+                inflater.inflate(R.menu.main_menu, menu)
+                setActionModeOn(mode)
+                return true
+            }
+            // Called each time the action mode is shown. Always called after onCreateActionMode, but
+            // may be called multiple times if the mode is invalidated.
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false // Return false if nothing is done
 
-    private val actionModeCallback = object : ActionMode.Callback {
-        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            // Inflate a menu resource providing context menu items
-            val inflater: MenuInflater = mode.menuInflater
-            inflater.inflate(R.menu.main_menu, menu)
-            setActionModeOn()
-            return true
+            // Called when the user selects a contextual menu item
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem) =
+                handleActionMode(mode, item)
+
+            // Called when the user exits the action mode
+            override fun onDestroyActionMode(mode: ActionMode) = setActionModeOff()
         }
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false // Return false if nothing is done
-
-        // Called when the user selects a contextual menu item
-        override fun onActionItemClicked(mode: ActionMode, item: MenuItem) =
-            handleActionMode(mode, item)
-
-        // Called when the user exits the action mode
-        override fun onDestroyActionMode(mode: ActionMode) = setActionModeOff()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addObservers()
-    }
-
-    private fun setupRecyclerView() {
-        binding.rvItemCounterList.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            adapter = countersAdapter
-        }
     }
 
     override fun onCreateView(
@@ -87,7 +96,29 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
         setupListeners()
-        viewModel.getCounters()
+        viewModel.fetchCounters()
+        viewModel.syncCounters()
+    }
+
+    override fun showLoading(loading: Boolean) {
+        binding.pbMainFragmentLoadingIndicator.visibility = if (loading) VISIBLE else GONE
+    }
+
+    override fun provideViewModel() =  ViewModelProvider(
+        this,
+        viewModelFactory
+    )[MainViewModel::class.java]
+
+    override fun onDestroy() {
+        super.onDestroy()
+        androidNetworkChecker.removeObserver(networkCheckerObserver)
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvItemCounterList.apply {
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            adapter = countersAdapter
+        }
     }
 
     private fun setupListeners() {
@@ -106,10 +137,6 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
-    override fun showLoading(loading: Boolean) {
-        binding.pbMainFragmentLoadingIndicator.visibility = if (loading) VISIBLE else GONE
-    }
-
     private fun addObservers() {
         viewModel.apply {
             counters.observe(this@MainFragment) { state ->
@@ -118,6 +145,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                         hideError()
                         showLoading(false)
                         processCounters(state.value)
+                        setHeaderText(state.value)
                     }
                     is State.Error -> {
                         showLoading(false)
@@ -144,7 +172,56 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                     }
                 }
             }
+
+            observeSyncCounters().observe(this@MainFragment) { state ->
+                when (state) {
+                    is State.Success<*> -> {
+                        showLoading(false)
+                        showSyncSuccessful()
+
+                    }
+                    is State.Error -> {
+                        showLoading(false)
+                        showSyncError(state.message)
+                    }
+                    is State.Loading -> {
+                        showLoading(state.loading)
+                    }
+                }
+            }
         }
+
+        androidNetworkChecker.observeForever(networkCheckerObserver)
+    }
+
+    private fun setHeaderText(value: List<CounterEntity>) {
+        binding.tvMainFragmentHeader.text = if (value.isEmpty()) {
+            ""
+        }
+        else {
+            val items = SpannableString(getString(R.string.n_items, value.size)).apply {
+                setSpan(StyleSpan(Typeface.BOLD),0, this.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            val times = getString(R.string.n_times, value.sumOf { it.count})
+            "$items $times"
+        }
+    }
+
+    private fun showSyncSuccessful() {
+        Snackbar.make(binding.root, getString(R.string.synced_data), Snackbar.LENGTH_SHORT).apply {
+            anchorView = binding.efabMainFragmentAddCounter
+        }.show()
+    }
+
+    private fun showSyncError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
+            setAction(getString(R.string.retry)) {
+                viewModel.syncCounters()
+            }
+        }.apply {
+            anchorView = binding.efabMainFragmentAddCounter
+
+        }.show()
     }
 
     private fun showDeletionError(message: String) {
@@ -207,7 +284,8 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
-    private fun setActionModeOn() {
+    private fun setActionModeOn(actionMode: ActionMode?) {
+        this.actionMode = actionMode
         countersAdapter.onActionMode(true)
         binding.apply {
             mcvMainFragmentSearchContainer.visibility = INVISIBLE
@@ -238,5 +316,11 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
             }
             else -> false
         }
+    }
+
+    private fun handleOnLongClick(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
+        requireActivity().startActionMode(actionModeCallback)
+        viewModel.performAction(action, counter)
+        counter.checked = counter.checked.not()
     }
 }
