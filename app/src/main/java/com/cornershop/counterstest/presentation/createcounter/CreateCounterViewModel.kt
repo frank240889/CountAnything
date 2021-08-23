@@ -1,7 +1,7 @@
 package com.cornershop.counterstest.presentation.createcounter
 
 import androidx.lifecycle.ViewModel
-import com.cornershop.counterstest.usecase.CreateCounter
+import com.cornershop.counterstest.domain.local.usecase.CreateCounter
 import javax.inject.Inject
 
 class CreateCounterViewModel @Inject constructor(

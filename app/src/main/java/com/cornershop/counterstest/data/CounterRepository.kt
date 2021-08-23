@@ -2,7 +2,7 @@ package com.cornershop.counterstest.data
 
 import com.cornershop.counterstest.data.local.CountersDatabase
 import com.cornershop.counterstest.data.remote.Api
-import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.Counter
 import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.domain.remote.CounterName
@@ -72,7 +72,7 @@ class CounterRepository @Inject constructor(
         val diff = abs(localCounter.count - remoteCounter.count)
         var synced = false
         synced = if (localCounter.count < remoteCounter.count ) {
-            decrementRemoteCounter(diff, localCounter.id).apply {
+            decrementRemoteCounter(diff - 1, localCounter.id).apply {
                 updateLocalCounter(localCounter.copy(pendingUpdate = false))
             }
         } else {
@@ -84,14 +84,14 @@ class CounterRepository @Inject constructor(
     }
 
     private suspend fun incrementRemoteValue(diff: Int, id: String): Boolean {
-        for (i in 0 until diff - 1) {
+        for (i in 0 until diff) {
             api.increment(CounterId(id))
         }
         return true
     }
 
     private suspend fun decrementRemoteCounter(diff: Int, id: String): Boolean {
-        for (i in diff -1 downTo 0) {
+        for (i in diff downTo 0) {
             api.decrement(CounterId(id))
         }
         return true

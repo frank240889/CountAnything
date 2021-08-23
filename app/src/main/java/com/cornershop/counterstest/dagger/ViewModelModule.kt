@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cornershop.counterstest.common.ViewModelFactory
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterViewModel
+import com.cornershop.counterstest.presentation.examplescountername.ExamplesViewModel
 import com.cornershop.counterstest.presentation.main.MainViewModel
 import com.cornershop.counterstest.presentation.welcome.WelcomeViewModel
 import dagger.Binds
@@ -30,4 +31,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CreateCounterViewModel::class)
     abstract fun provideCreateCounterViewModel(createCounterViewModel: CreateCounterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ExamplesViewModel::class)
+    abstract fun provideExamplesViewModel(examplesViewModel: ExamplesViewModel): ViewModel
 }

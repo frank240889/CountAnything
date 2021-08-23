@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.databinding.MainFragmentBinding
-import com.cornershop.counterstest.domain.local.CounterEntity
-import com.cornershop.counterstest.network.AndroidNetworkChecker
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
+import com.cornershop.counterstest.common.AndroidNetworkChecker
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
@@ -189,6 +189,14 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                     }
                 }
             }
+
+            observeIncrementError().observe(this@MainFragment) { state ->
+                handleIncDecOperation(state)
+            }
+
+            observeDecrementError().observe(this@MainFragment) { state ->
+                handleIncDecOperation(state)
+            }
         }
 
         androidNetworkChecker.observeForever(networkCheckerObserver)
@@ -221,6 +229,12 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }.apply {
             anchorView = binding.efabMainFragmentAddCounter
 
+        }.show()
+    }
+
+    private fun showSnackError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
+            anchorView = binding.efabMainFragmentAddCounter
         }.show()
     }
 
@@ -322,5 +336,20 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         requireActivity().startActionMode(actionModeCallback)
         viewModel.performAction(action, counter)
         counter.checked = counter.checked.not()
+    }
+
+    private fun handleIncDecOperation(state: State<String>?) {
+        when (state) {
+            is State.Success<*> -> {
+                showLoading(false)
+            }
+            is State.Error -> {
+                showLoading(false)
+                showSnackError(state.message)
+            }
+            is State.Loading -> {
+                showLoading(state.loading)
+            }
+        }
     }
 }

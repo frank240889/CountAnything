@@ -1,20 +1,26 @@
-package com.cornershop.counterstest.usecase
+package com.cornershop.counterstest.domain.local.usecase
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import com.cornershop.counterstest.common.CounterValidator
 import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.common.ErrorHandler
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.data.CounterRepository
+import com.cornershop.counterstest.domain.remote.CounterName
+import com.cornershop.counterstest.exceptions.InvalidTitleCounterException
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
-class SyncCounters @Inject constructor(
+class CreateCounter @Inject constructor(
     @CustomAnnotations.IODispatcher private val dispatcher: CoroutineDispatcher,
     private val counterRepository: CounterRepository,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val counterValidator: CounterValidator
 ): UseCase() {
+
+    var counterTitle: String? = null
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         if (throwable !is CancellationException) {
@@ -33,17 +39,16 @@ class SyncCounters @Inject constructor(
     override fun execute() {
         job?.cancel()
         val coroutineScope = CoroutineScope(coroutineExceptionHandler)
-        job = coroutineScope.launch(dispatcher) {
-            val needsSync = counterRepository.getCountersPendingToUpdate().isNotEmpty()
-            if (counterRepository.localCount() > 0 && needsSync) {
+        if (counterValidator.isTitleValid(counterTitle)) {
+            job = coroutineScope.launch(dispatcher) {
                 _response.postValue(State.Loading(true))
-                if (counterRepository.syncLocalCounters()) {
-                    _response.postValue(State.Success(Unit))
-                }
-                else {
-                    _response.postValue(State.Loading(false))
-                }
+                counterRepository.createLocalCounter(CounterName(counterTitle!!))
+                _response.postValue(State.Success(Unit))
             }
+        }
+        else {
+            _response.value = State.Error(errorHandler.handleError(InvalidTitleCounterException()))
+            _response.value = State.Loading(false)
         }
 
     }

@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.domain.local
+package com.cornershop.counterstest.domain.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

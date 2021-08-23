@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.network
+package com.cornershop.counterstest.common
 
 import android.annotation.SuppressLint
 import android.app.Application

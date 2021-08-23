@@ -38,7 +38,7 @@ class ExamplesAdapter(
 
         private val cExampleName: Chip = itemView.findViewById(R.id.c_item_example_name)
         init {
-            cExampleName.setOnCloseIconClickListener {
+            cExampleName.setOnClickListener {
                 listener.invoke(names[adapterPosition])
             }
         }

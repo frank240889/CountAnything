@@ -3,7 +3,10 @@ package com.cornershop.counterstest.presentation.createcounter
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,6 +20,7 @@ import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.databinding.CreateCounterFragmentBinding
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
+import com.cornershop.counterstest.presentation.examplescountername.ExamplesFragment
 
 class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
 
@@ -52,17 +56,46 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupListeners()
         setStyleSuggest()
+        parentFragmentManager.setFragmentResultListener(
+            "name",
+            viewLifecycleOwner,
+            { _, bundle ->
+                viewBinding
+                    .tietCreateCounterFragmentCounterName
+                    .setText(bundle.getString("name").toString())
+            }
+        )
     }
 
     private fun setStyleSuggest() {
-        val text = SpannableString(getString(R.string.create_counter_disclaimer)).apply {
+        val message = SpannableString(getString(R.string.create_counter_disclaimer)).apply {
             setSpan(object: ClickableSpan() {
                 override fun onClick(widget: View) {
+                    parentFragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.slide_in_right, R.anim.slide_out_left,
+                            R.anim.slide_in_left, R.anim.slide_out_right
+                        )
+                        .addToBackStack(ExamplesFragment::class.java.name)
+                        .replace(
+                            R.id.container,
+                            ExamplesFragment.newInstance(),
+                            ExamplesFragment::class.java.name
+                        )
+                        .commit()
+                }
 
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.isUnderlineText = true
                 }
             },length - 8, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        viewBinding.tvCreateCounterFragmentSuggestCounterName.text = text
+        viewBinding.tvCreateCounterFragmentSuggestCounterName.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+            text = message
+        }
     }
 
     private fun setupListeners() {
@@ -98,7 +131,6 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
                 vCreateCounterFragmentBlockingLayer.visibility = GONE
                 mbCreateCounterFragmentSaveCounter.visibility = VISIBLE
             }
-
         }
 
     }

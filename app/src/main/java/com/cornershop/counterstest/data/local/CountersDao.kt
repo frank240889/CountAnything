@@ -2,7 +2,7 @@ package com.cornershop.counterstest.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
 @Dao
 abstract class CountersDao {

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import com.cornershop.counterstest.common.State
-import com.cornershop.counterstest.domain.local.CounterEntity
-import com.cornershop.counterstest.usecase.*
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
+import com.cornershop.counterstest.domain.local.usecase.*
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -60,6 +60,10 @@ class MainViewModel @Inject constructor(
     fun getCountersName() = deleteCounter.getCountersName()
 
     fun syncCounters() = syncCounters.execute()
+
+    fun observeIncrementError() = incrementCounter.response
+
+    fun observeDecrementError() = decrementCounter.response
 
     fun onActiveSearch() {
         _counters.removeSource(getCounters.counters)

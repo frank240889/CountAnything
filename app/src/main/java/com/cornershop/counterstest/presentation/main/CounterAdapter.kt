@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
-import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
 class CounterAdapter(
     private val onClickListener: (Action, CounterEntity) -> Unit,

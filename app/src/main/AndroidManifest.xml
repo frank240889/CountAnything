@@ -15,18 +15,16 @@
         android:theme="@style/Theme.CountersNormal"
         android:name=".CountAnythingApplication">
         <activity
-            android:name=".presentation.main.MainActivity"
-            android:exported="true" />
-        <activity
             android:name=".presentation.welcome.WelcomeActivity"
-            android:theme="@style/Theme.CountersWelcome"
-            android:exported="false">
+            android:theme="@style/Theme.CountersWelcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.MainActivity" />
     </application>
 
 </manifest>

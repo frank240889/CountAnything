@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.cornershop.counterstest.databinding.ActivityWelcomeBinding
 import com.cornershop.counterstest.presentation.BaseViewModelActivity
-import com.cornershop.counterstest.presentation.main.MainActivity
+import com.cornershop.counterstest.presentation.MainActivity
 
 class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
 

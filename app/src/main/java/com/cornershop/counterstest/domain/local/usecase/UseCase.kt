@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.usecase
+package com.cornershop.counterstest.domain.local.usecase
 
 abstract class UseCase {
     abstract fun execute()

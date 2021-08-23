@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.usecase
+package com.cornershop.counterstest.domain.local.usecase
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -7,7 +7,7 @@ import com.cornershop.counterstest.common.CounterValidator
 import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.data.CounterRepository
-import com.cornershop.counterstest.domain.local.CounterEntity
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
