@@ -6,6 +6,7 @@ import com.cornershop.counterstest.common.ViewModelFactory
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterViewModel
 import com.cornershop.counterstest.presentation.examplescountername.ExamplesViewModel
 import com.cornershop.counterstest.presentation.main.MainViewModel
+import com.cornershop.counterstest.presentation.searchcounter.SearchViewModel
 import com.cornershop.counterstest.presentation.welcome.WelcomeViewModel
 import dagger.Binds
 import dagger.Module
@@ -36,4 +37,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ExamplesViewModel::class)
     abstract fun provideExamplesViewModel(examplesViewModel: ExamplesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun provideSearchViewModel(searchViewModel: SearchViewModel): ViewModel
 }

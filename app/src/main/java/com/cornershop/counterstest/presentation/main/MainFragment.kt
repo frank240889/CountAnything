@@ -7,19 +7,22 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
 import android.view.View.*
-import androidx.lifecycle.Observer
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
+import com.cornershop.counterstest.common.AndroidNetworkChecker
+import com.cornershop.counterstest.common.ShareHelper
 import com.cornershop.counterstest.common.State
+import com.cornershop.counterstest.common.Utils.TEXT_PLAIN
 import com.cornershop.counterstest.databinding.MainFragmentBinding
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
-import com.cornershop.counterstest.common.AndroidNetworkChecker
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
+import com.cornershop.counterstest.presentation.common.CounterAdapter
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
-import com.google.android.material.snackbar.Snackbar
+import com.cornershop.counterstest.presentation.searchcounter.SearchResultsFragment
 import javax.inject.Inject
 
 class MainFragment : BaseViewModelFragment<MainViewModel>() {
@@ -31,18 +34,14 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     @Inject
     lateinit var androidNetworkChecker: AndroidNetworkChecker
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
     override val viewModel: MainViewModel
         get() = provideViewModel()
 
     private var actionMode: ActionMode? = null
 
-    private val networkCheckerObserver: Observer<Boolean> by lazy {
-        Observer<Boolean> { connected ->
-            if (connected) {
-                viewModel.syncCounters()
-            }
-        }
-    }
 
     private var _binding: MainFragmentBinding? = null
 
@@ -52,6 +51,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         CounterAdapter (
             { action, counter ->
                 viewModel.performAction(action, counter)
+                actionMode?.title = getString(R.string.n_selected, viewModel.counterAmount())
             },
             { action, counter ->
                 handleOnLongClick(action, counter)
@@ -84,6 +84,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addObservers()
+        viewModel.fetchCounters()
     }
 
     override fun onCreateView(
@@ -94,25 +95,41 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupRefreshLayout()
         setupRecyclerView()
         setupListeners()
-        viewModel.fetchCounters()
-        viewModel.syncCounters()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (viewModel.observeCounters().value as? State.Success<List<CounterEntity>>)?.let { state ->
+            processCounters(state.value)
+            setHeaderText(state.value)
+        }
+    }
+
+    private fun setupRefreshLayout() {
+        binding.srlItemCounterRefresh.apply {
+            setOnRefreshListener {
+                viewModel.fetchCounters(true)
+            }
+            setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), R.color.orange)
+            )
+        }
     }
 
     override fun showLoading(loading: Boolean) {
-        binding.pbMainFragmentLoadingIndicator.visibility = if (loading) VISIBLE else GONE
+        binding.apply {
+            pbMainFragmentLoadingIndicator.visibility = if (loading) VISIBLE else GONE
+            srlItemCounterRefresh.isRefreshing = loading
+        }
     }
 
     override fun provideViewModel() =  ViewModelProvider(
         this,
         viewModelFactory
     )[MainViewModel::class.java]
-
-    override fun onDestroy() {
-        super.onDestroy()
-        androidNetworkChecker.removeObserver(networkCheckerObserver)
-    }
 
     private fun setupRecyclerView() {
         binding.rvItemCounterList.apply {
@@ -124,35 +141,52 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     private fun setupListeners() {
         binding.apply {
             efabMainFragmentAddCounter.setOnClickListener {
-                parentFragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.slide_in_right, R.anim.slide_out_left,
-                        R.anim.slide_in_left, R.anim.slide_out_right
-                    )
-                    .addToBackStack(CreateCounterFragment::class.java.name)
-                    .replace(R.id.container, CreateCounterFragment.newInstance())
-                    .commit()
+                goToCreateFragment()
+            }
+
+            mbMainFragmentErrorRetry.setOnClickListener {
+                viewModel.fetchCounters(true)
+            }
+            mcvMainFragmentSearchContainer.setOnClickListener {
+                goToSearch()
             }
         }
     }
 
+    private fun goToSearch() {
+        SearchResultsFragment.newInstance().show(childFragmentManager, SearchResultsFragment::class.java.name )
+    }
+
+    private fun goToCreateFragment() {
+        parentFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right, R.anim.slide_out_left,
+                R.anim.slide_in_left, R.anim.slide_out_right
+            )
+            .addToBackStack(CreateCounterFragment::class.java.name)
+            .replace(R.id.container, CreateCounterFragment.newInstance())
+            .commit()
+    }
+
     private fun addObservers() {
         viewModel.apply {
-            counters.observe(this@MainFragment) { state ->
+            observeCounters().observe(this@MainFragment) { state ->
                 when (state) {
                     is State.Success -> {
-                        hideError()
+                        showErrorMessage(GONE)
                         showLoading(false)
                         processCounters(state.value)
                         setHeaderText(state.value)
                     }
                     is State.Error -> {
                         showLoading(false)
-                        showError()
+                        showErrorMessage(VISIBLE)
+                        showNoCountersMessage(GONE)
                     }
                     is State.Loading -> {
-                        hideError()
+                        showNoCountersMessage(GONE)
+                        showErrorMessage(GONE)
                         showLoading(state.loading)
                     }
                 }
@@ -162,10 +196,15 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                 when (state) {
                     is State.Success<*> -> {
                         showLoading(false)
+                        actionMode?.title = getString(R.string.n_selected, viewModel.counterAmount())
                     }
                     is State.Error -> {
                         showLoading(false)
-                        showDeletionError(state.message)
+                        showDialog(
+                            title = getString(R.string.error_deleting_counter_title),
+                            message = state.message,
+                            positiveButtonText = getString(R.string.ok)
+                        )
                     }
                     is State.Loading -> {
                         showLoading(state.loading)
@@ -173,33 +212,74 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                 }
             }
 
-            observeSyncCounters().observe(this@MainFragment) { state ->
+            observeIncrementCounter().observe(this@MainFragment) { state ->
                 when (state) {
                     is State.Success<*> -> {
-                        showLoading(false)
-                        showSyncSuccessful()
-
+                        // NO OP
                     }
                     is State.Error -> {
-                        showLoading(false)
-                        showSyncError(state.message)
+                        showDialog(
+                            title = getString(
+                                R.string.error_updating_counter_title,
+                                viewModel.currentIncrementCounter().title,
+                                viewModel.currentIncrementCounter().count + 1
+                            ),
+                            message = state.message,
+                            positiveButtonText = getString(R.string.retry),
+                            negativeButtonText = getString(R.string.dismiss),
+                            onButtonPressed = object: InformativeDialogFragment.OnButtonPressed {
+                                override fun onPositive() {
+                                    viewModel.performAction(
+                                        CounterAdapter.Companion.Action.INCREMENT,
+                                        viewModel.currentIncrementCounter()
+                                    )
+                                }
+                            }
+                        )
                     }
                     is State.Loading -> {
-                        showLoading(state.loading)
+                        // NO OP
                     }
                 }
             }
 
-            observeIncrementError().observe(this@MainFragment) { state ->
-                handleIncDecOperation(state)
+            observeDecrementCounter().observe(this@MainFragment) { state ->
+                when (state) {
+                    is State.Success<*> -> {
+                        // NO OP
+                    }
+                    is State.Error -> {
+                        showDialog(
+                            title = getString(
+                                R.string.error_updating_counter_title,
+                                viewModel.currentDecrementCounter().title,
+                                viewModel.currentDecrementCounter().count - 1
+                            ),
+                            message = state.message,
+                            positiveButtonText = getString(R.string.retry),
+                            negativeButtonText = getString(R.string.dismiss),
+                            onButtonPressed = object: InformativeDialogFragment.OnButtonPressed {
+                                override fun onPositive() {
+                                    viewModel.performAction(
+                                        CounterAdapter.Companion.Action.DECREMENT,
+                                        viewModel.currentDecrementCounter()
+                                    )
+                                }
+                            }
+                        )
+                    }
+                    is State.Loading -> {
+                        // NO OP
+                    }
+                }
             }
 
-            observeDecrementError().observe(this@MainFragment) { state ->
-                handleIncDecOperation(state)
+            observeShareCounter().observe(this@MainFragment) { state ->
+                (state as? State.Success<String>)?.let { content ->
+                    shareHelper.share(content.value, TEXT_PLAIN, requireActivity())
+                }
             }
         }
-
-        androidNetworkChecker.observeForever(networkCheckerObserver)
     }
 
     private fun setHeaderText(value: List<CounterEntity>) {
@@ -215,86 +295,69 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
-    private fun showSyncSuccessful() {
-        Snackbar.make(binding.root, getString(R.string.synced_data), Snackbar.LENGTH_SHORT).apply {
-            anchorView = binding.efabMainFragmentAddCounter
-        }.show()
-    }
-
-    private fun showSyncError(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
-            setAction(getString(R.string.retry)) {
-                viewModel.syncCounters()
-            }
-        }.apply {
-            anchorView = binding.efabMainFragmentAddCounter
-
-        }.show()
-    }
-
-    private fun showSnackError(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
-            anchorView = binding.efabMainFragmentAddCounter
-        }.show()
-    }
-
-    private fun showDeletionError(message: String) {
+    private fun showDialog(
+        title: String = "",
+        message: String,
+        positiveButtonText: String = "",
+        negativeButtonText: String = "",
+        onButtonPressed: InformativeDialogFragment.OnButtonPressed? = null
+    ) {
         InformativeDialogFragment
             .newInstance(
-                title = getString(R.string.error_deleting_counter_title),
+                title = title,
                 message = message,
-                positiveButtonText = getString(R.string.ok)
-            )
+                positiveButtonText = positiveButtonText,
+                negativeButtonText = negativeButtonText
+            ).apply {
+                onButtonPressed?.let { callback ->
+                    setCallback(callback)
+                }
+            }
             .show(childFragmentManager, InformativeDialogFragment::class.java.name)
     }
 
     private fun processCounters(counters: List<CounterEntity>) {
         if (counters.isEmpty()) {
             actionMode?.finish()
-            showNoCounterMessage()
+            showNoCountersMessage(VISIBLE)
         }
         else {
-            hideNoCounters()
+            showNoCountersMessage(GONE)
         }
         countersAdapter.submit(counters)
     }
 
-    private fun showError() {
-        binding.llMainFragmentNoCountersMessageContainer.visibility = VISIBLE
+    private fun showNoCountersMessage(visibility: Int) {
+        binding.llMainFragmentNoCountersMessageContainer.visibility = visibility
     }
 
-    private fun hideError() {
-        binding.llMainFragmentNoCountersMessageContainer.visibility = GONE
-    }
-
-    private fun showNoCounterMessage() {
-        binding.llMainFragmentNoCountersMessageContainer.visibility = VISIBLE
-    }
-
-    private fun hideNoCounters() {
-        binding.llMainFragmentNoCountersMessageContainer.visibility = GONE
+    private fun showErrorMessage(visibility: Int) {
+        binding.llMainFragmentErrorMessageContainer.visibility = visibility
     }
 
     private fun confirmDelete() {
-        viewModel.getCountersName().let { names ->
+        if (viewModel.countersCanBeDeleted()) {
+            showDialog(
+                message = getString(R.string.delete_x_question, viewModel.getCountersName()),
+                positiveButtonText = getString(R.string.delete),
+                negativeButtonText = getString(R.string.cancel),
+                onButtonPressed = object: InformativeDialogFragment.OnButtonPressed {
+                    override fun onPositive() {
+                        viewModel.delete()
+                    }
 
-            InformativeDialogFragment
-                .newInstance(
-                    message = getString(R.string.delete_x_question, names),
-                    positiveButtonText = getString(R.string.delete),
-                    negativeButtonText = getString(R.string.cancel)
-                ).apply {
-                    setCallback(object : InformativeDialogFragment.OnButtonPressed {
-                        override fun onPositive() {
-                            viewModel.delete()
-                        }
-
-                        override fun onNegative() {
-                            actionMode?.finish()
-                        }
-                    })
+                    override fun onNegative() {
+                        actionMode?.finish()
+                    }
                 }
-                .show(childFragmentManager, InformativeDialogFragment::class.java.name)
+            )
+        }
+        else {
+            showDialog(
+                title = getString(R.string.error_deleting_counter_title),
+                message = getString(R.string.no_items_to_delete),
+                positiveButtonText = getString(R.string.ok)
+            )
         }
     }
 
@@ -314,14 +377,13 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
             mcvMainFragmentSearchContainer.visibility = VISIBLE
             efabMainFragmentAddCounter.show()
         }
-        viewModel.clearDeletionList()
+        viewModel.clearMultiselect()
     }
 
     private fun handleActionMode(mode: ActionMode, item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_action_share -> {
-                //shareCurrentItem()
-                mode.finish() // Action picked, so close the CAB
+                handleShareAction(mode)
                 true
             }
             R.id.menu_action_delete -> {
@@ -332,24 +394,24 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
+    private fun handleShareAction(mode: ActionMode) {
+        if (viewModel.countersCanBeShared()) {
+            viewModel.share()
+            mode.finish()
+        }
+        else {
+            showDialog(
+                title = getString(R.string.error_sharing_counter_title),
+                message = getString(R.string.no_share_items_selected),
+                positiveButtonText = getString(R.string.ok)
+            )
+        }
+    }
+
     private fun handleOnLongClick(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
         requireActivity().startActionMode(actionModeCallback)
         viewModel.performAction(action, counter)
         counter.checked = counter.checked.not()
-    }
-
-    private fun handleIncDecOperation(state: State<String>?) {
-        when (state) {
-            is State.Success<*> -> {
-                showLoading(false)
-            }
-            is State.Error -> {
-                showLoading(false)
-                showSnackError(state.message)
-            }
-            is State.Loading -> {
-                showLoading(state.loading)
-            }
-        }
+        actionMode?.title = getString(R.string.n_selected, viewModel.counterAmount())
     }
 }

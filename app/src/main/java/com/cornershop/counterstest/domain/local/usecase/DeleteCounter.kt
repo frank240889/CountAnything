@@ -7,14 +7,17 @@ import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.common.ErrorHandler
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.data.CounterRepository
+import com.cornershop.counterstest.data.local.cache.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import kotlinx.coroutines.*
+import java.util.*
 import javax.inject.Inject
 
 class DeleteCounter @Inject constructor(
     @CustomAnnotations.IODispatcher private val dispatcher: CoroutineDispatcher,
     private val counterRepository: CounterRepository,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val cache: Cache<CounterEntity, List<CounterEntity>>
 ): UseCase() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -27,44 +30,44 @@ class DeleteCounter @Inject constructor(
         MediatorLiveData()
     }
 
-    private val countersToDelete: MutableList<CounterEntity> by lazy {
-        ArrayList()
-    }
-
     val response: LiveData<State<Unit>> get() = _response
 
     private var job: Job? = null
+
+    private val queue: Deque<String> by lazy {
+        ArrayDeque()
+    }
 
     override fun execute() {
         job?.cancel()
         val coroutineScope = CoroutineScope(coroutineExceptionHandler)
         job = coroutineScope.launch(dispatcher) {
             _response.postValue(State.Loading(true))
-            countersToDelete.forEach { counterEntity ->
+            cache.data().forEach { counterEntity ->
                 counterRepository.deleteCounter(counterEntity)
+                queue.add(counterEntity.id)
             }
+            removeInCacheData()
             _response.postValue(State.Success(Unit))
         }
+    }
 
+    private fun removeInCacheData() {
+        queue.forEach { id ->
+            cache
+                .data()
+                .find { counterEntity ->
+                    counterEntity.id == id
+                }?.let { entityFound ->
+                    cache.remove(entityFound)
+                    queue.pop()
+                }
+        }
     }
 
     override fun release() {
         job?.cancel()
     }
 
-    fun addToDelete(counter: CounterEntity) {
-        if (countersToDelete.find { it.id == counter.id } == null) {
-            countersToDelete.add(counter)
-        }
-        else {
-            countersToDelete.remove(counter)
-        }
-
-    }
-
-    fun clearDeletionList() = countersToDelete.clear()
-
-    fun getCountersName() = countersToDelete.joinToString {
-        it.title
-    }
+    fun getCountersName() = cache.data().joinToString { it.title }
 }

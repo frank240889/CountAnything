@@ -37,16 +37,16 @@ class ApiModule {
         OkHttpClient.Builder()
             .addInterceptor(httpInterceptor)
             .callTimeout(
-                3,
-                TimeUnit.MINUTES
+                10,
+                TimeUnit.SECONDS
             )
             .readTimeout(
-                3,
-                TimeUnit.MINUTES
+                10,
+                TimeUnit.SECONDS
             )
             .connectTimeout(
-                3,
-                TimeUnit.MINUTES
+                10,
+                TimeUnit.SECONDS
             )
             .build()
 

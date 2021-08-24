@@ -13,4 +13,7 @@
     <dimen name="default_card_corner_radius">8dp</dimen>
     <dimen name="max_elevation">16dp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="small_rounded_shape">4dp</dimen>
+    <dimen name="medium_rounded_shape">8dp</dimen>
+    <dimen name="large_rounded_shape">16dp</dimen>
 </resources>

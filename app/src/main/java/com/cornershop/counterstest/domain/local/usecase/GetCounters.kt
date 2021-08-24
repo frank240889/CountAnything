@@ -28,6 +28,8 @@ class GetCounters @Inject constructor(
 
     val counters: LiveData<State<List<CounterEntity>>> get() = _counters
 
+    var forceRefresh = false
+
     private var job: Job? = null
 
     init {
@@ -40,7 +42,7 @@ class GetCounters @Inject constructor(
         job?.cancel()
         job = CoroutineScope(coroutineExceptionHandler).launch(dispatcher) {
             _counters.postValue(State.Loading(true))
-            counterRepository.fetchCounters()
+            counterRepository.fetchCounters(forceRefresh)
         }
     }
 

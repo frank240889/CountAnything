@@ -15,6 +15,9 @@
         <item name="actionModeStyle">@style/ActionMode</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.CountAnything.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.CountAnything.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.CountAnything.LargeComponent</item>
     </style>
 
     <style name="Theme.CountersWelcome" parent="Theme.CountersNormal">
@@ -23,5 +26,26 @@
 
     <style name="ActionMode" parent="Base.Widget.AppCompat.ActionMode">
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="ShapeAppearance.CountAnything.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/small_rounded_shape</item>
+    </style>
+
+    <style name="ShapeAppearance.CountAnything.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/medium_rounded_shape</item>
+    </style>
+
+    <style name="ShapeAppearance.CountAnything.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/large_rounded_shape</item>
+    </style>
+
+
+    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 </resources>

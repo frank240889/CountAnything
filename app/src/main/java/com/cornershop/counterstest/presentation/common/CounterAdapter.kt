@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.presentation.main
+package com.cornershop.counterstest.presentation.common
 
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +19,7 @@ import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
 class CounterAdapter(
     private val onClickListener: (Action, CounterEntity) -> Unit,
-    private val onLongClickListener: (Action, CounterEntity) -> Unit
+    private val onLongClickListener: ((Action, CounterEntity) -> Unit)? = null
 
 ): RecyclerView.Adapter<CounterAdapter.CounterViewHolder>() {
 
@@ -46,7 +46,7 @@ class CounterAdapter(
         enum class Action {
             INCREMENT,
             DECREMENT,
-            DELETE
+            MULTISELECT
         }
     }
 
@@ -140,7 +140,7 @@ class CounterAdapter(
                     it.checked = it.checked.not()
                     notifyItemChanged(adapterPosition)
                 }
-                onClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
+                onClickListener.invoke(Action.MULTISELECT, diffUtil.currentList[adapterPosition])
             }
             else {
                 when (v?.id) {
@@ -159,7 +159,7 @@ class CounterAdapter(
 
         override fun onLongClick(v: View?): Boolean {
             if (!actionMode) {
-                onLongClickListener.invoke(Action.DELETE, diffUtil.currentList[adapterPosition])
+                onLongClickListener?.invoke(Action.MULTISELECT, diffUtil.currentList[adapterPosition])
                 notifyItemChanged(adapterPosition)
             }
             return true

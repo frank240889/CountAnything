@@ -6,6 +6,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import javax.inject.Singleton
 
 @Component(
     modules =[
@@ -21,6 +22,7 @@ import dagger.android.AndroidInjector
         LocalStorageModule::class
     ]
 )
+@Singleton
 interface ApplicationComponent: AndroidInjector<CountAnythingApplication> {
 
     @Component.Builder

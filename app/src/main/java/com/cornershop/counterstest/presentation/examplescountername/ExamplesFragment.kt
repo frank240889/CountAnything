@@ -29,11 +29,7 @@ class ExamplesFragment : BaseViewModelFragment<ExamplesViewModel>() {
     }
 
     private val listener: (String) -> Unit = { name ->
-        parentFragmentManager.setFragmentResult(
-            "name", // Same request key FragmentA used to register its listener
-            bundleOf("name" to name) // The data to be passed to FragmentA
-        )
-        parentFragmentManager.popBackStack()
+        goBackWithSelectedName(name)
     }
 
     private val topic1Adapter: ExamplesAdapter by lazy {
@@ -142,5 +138,13 @@ class ExamplesFragment : BaseViewModelFragment<ExamplesViewModel>() {
         override fun handleOnBackPressed() {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    private fun goBackWithSelectedName(name: String) {
+        parentFragmentManager.setFragmentResult(
+            "name", // Same request key FragmentA used to register its listener
+            bundleOf("name" to name) // The data to be passed to FragmentA
+        )
+        parentFragmentManager.popBackStack()
     }
 }

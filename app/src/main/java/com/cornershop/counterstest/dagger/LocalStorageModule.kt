@@ -1,7 +1,7 @@
 package com.cornershop.counterstest.dagger
 
 import android.app.Application
-import com.cornershop.counterstest.data.local.CountersDatabase
+import com.cornershop.counterstest.data.local.database.CountersDatabase
 import dagger.Module
 import dagger.Provides
 

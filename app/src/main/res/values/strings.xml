@@ -38,6 +38,7 @@
     <string name="error_creating_counter_title">Couldn’t create the counter</string>
     <string name="error_updating_counter_title">Couldn’t update the “%s” counter to %d</string>
     <string name="error_deleting_counter_title">Couldn’t delete the counter</string>
+    <string name="error_sharing_counter_title">Couldn’t share the counters</string>
     <string name="connection_error_description">The Internet connection appears to be offline.</string>
     <string name="generic_error_description">There has been a problem.</string>
     <string name="retry">Retry</string>
@@ -54,8 +55,10 @@
     <string name="counter_name_hint">Cups of coffee</string>
     <string name="create_counter_disclaimer">Give it a name. Creative block? See examples.</string>
     <string name="delete_x_question">Delete "%s"?</string>
+    <string name="no_share_items_selected">Select items to share first</string>
     <string name="n_per_counter_name">%d × %s</string>
     <string name="invalid_title_counter">Invalid title counter</string>
     <string name="allowed_chars">"0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ,-_ "</string>
     <string name="synced_data">Data successful synced</string>
+    <string name="no_items_to_delete">No items selected to delete.</string>
 </resources>

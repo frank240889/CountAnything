@@ -1,43 +1,43 @@
 package com.cornershop.counterstest.presentation.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
-import com.cornershop.counterstest.common.State
+import com.cornershop.counterstest.data.local.cache.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.local.usecase.*
+import com.cornershop.counterstest.presentation.common.CounterAdapter
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+open class MainViewModel @Inject constructor(
     private val getCounters: GetCounters,
     private val incrementCounter: IncrementCounter,
     private val decrementCounter: DecrementCounter,
-    private val searchCounter: SearchCounter,
     private val deleteCounter: DeleteCounter,
-    private val syncCounters: SyncCounters
+    private val shareCounter: ShareCounter,
+    private val cache: Cache<CounterEntity, List<CounterEntity>>
 ): ViewModel() {
 
-    private val _counters: MediatorLiveData<State<List<CounterEntity>>> by lazy {
-        MediatorLiveData()
-    }
-
-    val counters: LiveData<State<List<CounterEntity>>> get() = _counters
-
-    init {
-        _counters.addSource(getCounters.counters) {
-            _counters.value = it
-        }
-    }
 
     override fun onCleared() {
         releaseUseCases()
+        cache.clear()
     }
+
+    fun observeCounters() = getCounters.counters
 
     fun observeDeletionCounters() = deleteCounter.response
 
-    fun observeSyncCounters() = syncCounters.response
+    fun observeShareCounter() = shareCounter.response
 
-    fun fetchCounters() = getCounters.execute()
+    fun currentIncrementCounter() = incrementCounter.counterEntity
+
+    fun currentDecrementCounter() = decrementCounter.counterEntity
+
+    fun fetchCounters(forceRefresh: Boolean = false) {
+        getCounters.apply {
+            this.forceRefresh = forceRefresh
+            execute()
+        }
+    }
 
     fun performAction(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
         when (action) {
@@ -48,42 +48,30 @@ class MainViewModel @Inject constructor(
                 decrementCounter(counter)
             }
             else -> {
-                addForDeletion(counter)
+                handleMultiselect(counter)
             }
         }
     }
 
     fun delete() = deleteCounter.execute()
 
-    fun clearDeletionList() = deleteCounter.clearDeletionList()
+    fun share() = shareCounter.execute()
+
+    fun clearMultiselect() {
+        cache.clear()
+    }
 
     fun getCountersName() = deleteCounter.getCountersName()
 
-    fun syncCounters() = syncCounters.execute()
+    fun observeIncrementCounter() = incrementCounter.response
 
-    fun observeIncrementError() = incrementCounter.response
+    fun observeDecrementCounter() = decrementCounter.response
 
-    fun observeDecrementError() = decrementCounter.response
+    fun countersCanBeDeleted() = cache.data().isNotEmpty()
 
-    fun onActiveSearch() {
-        _counters.removeSource(getCounters.counters)
-        _counters.addSource(searchCounter.searchResults) {
-            _counters.value = it
-        }
-    }
+    fun countersCanBeShared() = cache.data().isNotEmpty()
 
-    fun onInactiveActiveSearch() {
-        _counters.removeSource(searchCounter.searchResults)
-        _counters.addSource(getCounters.counters) {
-            _counters.value = it
-        }
-    }
-
-    fun search(title: String) {
-        searchCounter.title = title
-        searchCounter.execute()
-    }
-
+    fun counterAmount() = cache.data().size
 
     private fun incrementCounter(counter: CounterEntity) {
         incrementCounter.counterEntity = counter
@@ -97,15 +85,17 @@ class MainViewModel @Inject constructor(
         decrementCounter.execute()
     }
 
-    private fun addForDeletion(counter: CounterEntity) {
-        deleteCounter.addToDelete(counter)
+    private fun handleMultiselect(counter: CounterEntity) {
+        if (cache.contains(counter))
+            cache.remove(counter)
+        else
+            cache.add(counter)
     }
 
     private fun releaseUseCases() {
         getCounters.release()
         incrementCounter.release()
         decrementCounter.release()
-        searchCounter.release()
         deleteCounter.release()
     }
 }

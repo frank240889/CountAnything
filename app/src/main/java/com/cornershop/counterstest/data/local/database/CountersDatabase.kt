@@ -1,10 +1,10 @@
-package com.cornershop.counterstest.data.local
+package com.cornershop.counterstest.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.cornershop.counterstest.data.local.CountersDatabase.Companion.CURRENT_DATABASE_VERSION
+import com.cornershop.counterstest.data.local.database.CountersDatabase.Companion.CURRENT_DATABASE_VERSION
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
 @Database(entities = [CounterEntity::class], version = CURRENT_DATABASE_VERSION, exportSchema = true)
