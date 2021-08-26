@@ -3,6 +3,7 @@ package com.cornershop.counterstest.common
 import android.content.Context
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
+import com.cornershop.counterstest.interfaces.ResourceManager
 import javax.inject.Inject
 
 class ResourceManagerImpl @Inject constructor(

@@ -11,7 +11,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.cornershop.counterstest.R
@@ -37,13 +36,8 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
 
     private val viewBinding get() = _viewBinding!!
 
-    private val callback: OnBackPressedCallback by lazy {
-        provideBackstackCallback()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
         setupObservers()
     }
 
@@ -58,11 +52,6 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
         setupListeners()
         setStyleSuggest()
         addFragmentCallback()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        callback.remove()
     }
 
     override fun showLoading(loading: Boolean) {
@@ -98,7 +87,7 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
             { _, bundle ->
                 viewBinding
                     .tietCreateCounterFragmentCounterName
-                    .setText(bundle.getString("name").toString())
+                    .setText(bundle.getString(NAME).toString())
             }
         )
     }
@@ -151,12 +140,6 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
             tietCreateCounterFragmentCounterName.doOnTextChanged { text, _, _, _ ->
                 viewModel.setTitle(text.toString())
             }
-        }
-    }
-
-    private fun provideBackstackCallback() = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            parentFragmentManager.popBackStack()
         }
     }
 

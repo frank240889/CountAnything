@@ -21,7 +21,7 @@
     </string-array>
 
     <!-- Others -->
-    <string name="app_name">Counters Test</string>
+    <string name="app_name">CountAnything</string>
     <string name="welcome_title">Counters</string>
     <string name="welcome_description">Capture cups of lattes, frapuccinos, or anything else that can be counted.</string>
     <string name="get_started">Get started</string>
@@ -30,7 +30,7 @@
     <string name="no_counters_phrase">“When I started counting my blessings, my whole life turned around.”
 —Willie Nelson</string>
     <string name="search_counters">Search Counters</string>
-    <string name="add_counters">Add counters</string>
+    <string name="add_counters">Add counter</string>
     <string name="n_items">%d items</string>
     <string name="n_times">%d times</string>
     <string name="n_selected">%d selected</string>

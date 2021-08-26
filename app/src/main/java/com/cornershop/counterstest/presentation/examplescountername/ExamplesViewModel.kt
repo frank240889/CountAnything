@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cornershop.counterstest.R
-import com.cornershop.counterstest.common.ResourceManager
+import com.cornershop.counterstest.interfaces.ResourceManager
 import java.util.*
 import javax.inject.Inject
 

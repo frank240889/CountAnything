@@ -1,4 +1,4 @@
-package com.cornershop.counterstest
+package com.cornershop.common
 
 import com.cornershop.counterstest.common.CounterValidator
 import org.junit.Test

@@ -43,9 +43,17 @@
         <item name="cornerSize">@dimen/large_rounded_shape</item>
     </style>
 
-
-    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
+    <style name="ThemeCounters.FullScreenDialog" parent="Theme.MaterialComponents.DayNight.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <style name="ThemeCounters.RoundedAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ThemeCounters.ShapeAppearanceOverlay.Dialog.Rounded</item>
+    </style>
+
+    <style name="ThemeCounters.ShapeAppearanceOverlay.Dialog.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
     </style>
 </resources>

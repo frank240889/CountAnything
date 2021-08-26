@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.CounterName
 
-interface AbstractCountRepository {
+interface Repository {
     suspend fun fetchCounters(forceRemoteFetching: Boolean = false)
 
     suspend fun createLocalCounter(counterName: CounterName)

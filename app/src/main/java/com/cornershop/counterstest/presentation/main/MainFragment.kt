@@ -133,7 +133,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvItemCounterList.apply {
+        binding.incMainFragmentCounterList.rvItemCounterList.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = countersAdapter
         }

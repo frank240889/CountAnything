@@ -1,7 +1,7 @@
 package com.cornershop.counterstest.dagger
 
-import com.cornershop.counterstest.common.ResourceManager
 import com.cornershop.counterstest.common.ResourceManagerImpl
+import com.cornershop.counterstest.interfaces.ResourceManager
 import dagger.Binds
 import dagger.Module
 

@@ -57,13 +57,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_main_fragment_header">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_item_counter_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_counter"
-            android:paddingBottom="@dimen/margin_normal_3"
-            android:clipToPadding="false"/>
+        <include
+            android:id="@+id/inc_main_fragment_counter_list"
+            layout="@layout/counter_list"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <LinearLayout
         android:id="@+id/ll_main_fragment_no_counters_message_container"
@@ -135,7 +131,7 @@
             android:textAlignment="center" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/mb_main_fragment_error_retry"
-            android:theme="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

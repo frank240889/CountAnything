@@ -3,6 +3,7 @@ package com.cornershop.counterstest.common
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.cornershop.counterstest.interfaces.ResourceManager
 import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test

@@ -3,6 +3,7 @@ package com.cornershop.counterstest.presentation.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import com.cornershop.counterstest.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class InformativeDialogFragment: DialogFragment() {
@@ -51,7 +52,7 @@ class InformativeDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
-            return MaterialAlertDialogBuilder(it).apply {
+            return MaterialAlertDialogBuilder(it, R.style.ThemeCounters_RoundedAlertDialog).apply {
 
                 if (title.isNotEmpty() || title.isNotBlank()) {
                     setTitle(title)

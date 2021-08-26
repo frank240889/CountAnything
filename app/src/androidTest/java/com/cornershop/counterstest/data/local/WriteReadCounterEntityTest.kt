@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.data
+package com.cornershop.counterstest.data.local
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

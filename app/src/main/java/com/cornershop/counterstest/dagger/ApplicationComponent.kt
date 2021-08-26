@@ -19,7 +19,8 @@ import javax.inject.Singleton
         ViewModelModule::class,
         ResourceManagerModule::class,
         StoreManagerModule::class,
-        LocalStorageModule::class
+        LocalStorageModule::class,
+        ErrorHandlerModule::class
     ]
 )
 @Singleton

@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.common
+package com.cornershop.counterstest.interfaces
 
 import androidx.annotation.StringRes
 

@@ -57,9 +57,18 @@
         android:alpha="0"
         android:visibility="invisible"
         tools:context=".presentation.MainActivity">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_search_result_item_counter_list"
+        <include
+            android:id="@+id/inc_search_result_fragment_counter_list"
+            layout="@layout/counter_list"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_search_result_header"
+            app:layout_constraintVertical_bias="1.0"/>
+        <include
+            android:id="@+id/ll_counter_list"
+            layout="@layout/counter_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="false"
@@ -69,8 +78,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_search_result_header"
-            app:layout_constraintVertical_bias="1.0"
-            tools:listitem="@layout/item_counter" />
+            app:layout_constraintVertical_bias="1.0"/>
 
         <TextView
             android:id="@+id/tv_search_result_title_no_counters"

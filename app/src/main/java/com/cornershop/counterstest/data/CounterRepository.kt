@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class CounterRepository @Inject constructor(
     private val api: Api,
     private val dao: CountersDao
-): AbstractCountRepository {
+): Repository {
 
     override suspend fun fetchCounters(forceRemoteFetching: Boolean) {
         clearAll()

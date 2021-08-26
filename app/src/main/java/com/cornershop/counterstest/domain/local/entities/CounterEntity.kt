@@ -13,7 +13,7 @@ data class CounterEntity(
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "count")
-    val count: Int
+    var count: Int
 ){
     @Ignore
     var checked: Boolean = false

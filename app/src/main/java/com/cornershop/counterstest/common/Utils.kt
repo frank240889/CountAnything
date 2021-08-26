@@ -2,6 +2,7 @@ package com.cornershop.counterstest.common
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -33,5 +34,15 @@ object Utils {
 
         @Suppress("UNCHECKED_CAST")
         return data as T
+    }
+
+
+    fun List<CounterEntity>.joinToStringWithDefault(): String {
+        return this.joinToString(
+            separator = "\n",
+            transform = { counterEntity ->
+                counterEntity.count.toString().plus(" x ").plus(counterEntity.title)
+            }
+        )
     }
 }

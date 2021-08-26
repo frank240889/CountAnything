@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.cornershop.counterstest.common.State
+import com.cornershop.counterstest.common.Utils.joinToStringWithDefault
 import com.cornershop.counterstest.data.local.cache.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import javax.inject.Inject
@@ -22,10 +23,5 @@ class ShareCounter @Inject constructor(
         _response.value = State.Success(createShareableStringFromData())
     }
 
-    private fun createShareableStringFromData() = cache.data().joinToString(
-        separator = "\n",
-        transform = { counterEntity ->
-            counterEntity.count.toString().plus(" x ").plus(counterEntity.title)
-        }
-    )
+    private fun createShareableStringFromData() = cache.data().joinToStringWithDefault()
 }

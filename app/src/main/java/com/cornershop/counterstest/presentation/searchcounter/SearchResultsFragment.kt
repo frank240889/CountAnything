@@ -66,7 +66,7 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
+        setStyle(STYLE_NORMAL, R.style.ThemeCounters_FullScreenDialog)
         addObservers()
     }
 
@@ -118,7 +118,7 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
     )[SearchViewModel::class.java]
 
     private fun setupRecyclerView() {
-        binding.rvSearchResultItemCounterList.apply {
+        binding.incSearchResultFragmentCounterList.rvItemCounterList.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = countersAdapter
         }
