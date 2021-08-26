@@ -12,7 +12,7 @@
         android:id="@+id/mcv_main_fragment_search_container"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/margin_small_1"
         android:layout_marginStart="@dimen/margin_normal_1"
         android:layout_marginEnd="@dimen/margin_normal_1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/srl_item_counter_refresh"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/no_height"
         android:layout_marginTop="@dimen/margin_normal_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
 
         <TextView
             android:id="@+id/tv_main_fragment_title_no_counters"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal_3"
@@ -89,7 +89,7 @@
 
         <TextView
             android:id="@+id/tv_main_fragment_description_no_counters"
-            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal_3"
@@ -114,7 +114,7 @@
 
         <TextView
             android:id="@+id/tv_main_fragment_title_error_no_counters"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal_3"
@@ -124,7 +124,7 @@
 
         <TextView
             android:id="@+id/tv_main_fragment_description_error_no_counters"
-            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal_3"
@@ -135,7 +135,7 @@
             android:textAlignment="center" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/mb_main_fragment_error_retry"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:theme="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
 
     <TextView
         android:id="@+id/tv_main_fragment_header"
-        style="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal_1"

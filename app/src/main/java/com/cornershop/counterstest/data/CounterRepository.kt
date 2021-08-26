@@ -1,6 +1,6 @@
 package com.cornershop.counterstest.data
 
-import com.cornershop.counterstest.data.local.database.CountersDatabase
+import com.cornershop.counterstest.data.local.database.CountersDao
 import com.cornershop.counterstest.data.remote.Api
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.Counter
@@ -12,10 +12,10 @@ import javax.inject.Singleton
 @Singleton
 class CounterRepository @Inject constructor(
     private val api: Api,
-    private val db: CountersDatabase
-) {
+    private val dao: CountersDao
+): AbstractCountRepository {
 
-    suspend fun fetchCounters(forceRemoteFetching: Boolean = false) {
+    override suspend fun fetchCounters(forceRemoteFetching: Boolean) {
         clearAll()
         if (forceRemoteFetching || localCount() == 0) {
             fetchRemoteCounters().apply {
@@ -24,32 +24,32 @@ class CounterRepository @Inject constructor(
         }
     }
 
-    suspend fun createLocalCounter(counterName: CounterName) {
+    override suspend fun createLocalCounter(counterName: CounterName) {
         api.createRemoteCounter(counterName).apply {
             insertCounters(this)
         }
     }
 
-    suspend fun incrementCounterByOne(counterEntity: CounterEntity) {
+    override suspend fun incrementCounterByOne(counterEntity: CounterEntity) {
         api.increment(CounterId(counterEntity.id))
-        db.countersDao().update(counterEntity.copy(count = counterEntity.count + 1))
+        dao.update(counterEntity.copy(count = counterEntity.count + 1))
     }
 
-    suspend fun decrementCounterByOne(counterEntity: CounterEntity) {
+    override suspend fun decrementCounterByOne(counterEntity: CounterEntity) {
         api.decrement(CounterId(counterEntity.id))
-        db.countersDao().update(counterEntity.copy(count = counterEntity.count - 1))
+        dao.update(counterEntity.copy(count = counterEntity.count - 1))
     }
 
-    suspend fun deleteCounter(counter: CounterEntity) {
+    override suspend fun deleteCounter(counter: CounterEntity) {
         api.deleteRemoteCounter(CounterId(counter.id)).let {
-            db.countersDao().delete(counter)
+            dao.delete(counter)
         }
     }
 
-    fun localCountersObservable() = db.countersDao().counters()
+    override fun localCountersObservable() = dao.counters()
 
     private fun insertCounters(remoteCounters: List<Counter>) {
-        db.countersDao().insert(remoteCounters.map { counter ->
+        dao.insert(remoteCounters.map { counter ->
             CounterEntity(
                 counter.id,
                 counter.title,
@@ -58,9 +58,9 @@ class CounterRepository @Inject constructor(
         })
     }
 
-    private suspend fun localCount() = db.countersDao().count()
+    private suspend fun localCount() = dao.count()
 
     private suspend fun fetchRemoteCounters() = api.getAllRemoteCounters()
 
-    private fun clearAll() = db.clearAllTables()
+    private fun clearAll() = dao.clear()
 }

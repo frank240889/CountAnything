@@ -85,6 +85,11 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
         viewModelFactory
     )[CreateCounterViewModel::class.java]
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _viewBinding = null
+    }
+
 
     private fun addFragmentCallback() {
         parentFragmentManager.setFragmentResultListener(

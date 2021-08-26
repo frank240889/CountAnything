@@ -7,15 +7,16 @@ import com.cornershop.counterstest.common.CounterValidator
 import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.common.ErrorHandler
 import com.cornershop.counterstest.common.State
-import com.cornershop.counterstest.data.CounterRepository
+import com.cornershop.counterstest.data.AbstractCountRepository
 import com.cornershop.counterstest.domain.remote.CounterName
 import com.cornershop.counterstest.exceptions.InvalidTitleCounterException
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
+@CustomAnnotations.OpenForTesting
 class CreateCounter @Inject constructor(
     @CustomAnnotations.IODispatcher private val dispatcher: CoroutineDispatcher,
-    private val counterRepository: CounterRepository,
+    private val counterRepository: AbstractCountRepository,
     private val errorHandler: ErrorHandler,
     private val counterValidator: CounterValidator
 ): UseCase() {

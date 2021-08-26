@@ -69,6 +69,10 @@ class ExamplesFragment : BaseViewModelFragment<ExamplesViewModel>() {
         setupRecyclersView()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
     override fun onDetach() {
         super.onDetach()
         callback.remove()

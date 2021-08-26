@@ -10,4 +10,7 @@ class LocalStorageModule {
 
     @Provides
     fun providesCounterDatabase(application: Application) = CountersDatabase.getInstance(application)
+
+    @Provides
+    fun providesCounterDao(countersDatabase: CountersDatabase) = countersDatabase.countersDao()
 }

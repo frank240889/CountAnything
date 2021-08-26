@@ -6,14 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.common.ErrorHandler
 import com.cornershop.counterstest.common.State
-import com.cornershop.counterstest.data.CounterRepository
+import com.cornershop.counterstest.data.AbstractCountRepository
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class DecrementCounter @Inject constructor(
     @CustomAnnotations.IODispatcher private val dispatcher: CoroutineDispatcher,
-    private val counterRepository: CounterRepository,
+    private val counterRepository: AbstractCountRepository,
     private val errorHandler: ErrorHandler
 ): UseCase() {
 

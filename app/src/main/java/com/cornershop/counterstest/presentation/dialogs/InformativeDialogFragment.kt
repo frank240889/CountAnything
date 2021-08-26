@@ -75,13 +75,13 @@ class InformativeDialogFragment: DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    fun setCallback(onButtonPressed: OnButtonPressed) {
-        this.callback = onButtonPressed
-    }
-
     override fun onDetach() {
         super.onDetach()
         callback = null
+    }
+
+    fun setCallback(onButtonPressed: OnButtonPressed) {
+        this.callback = onButtonPressed
     }
 
     interface OnButtonPressed {

@@ -89,14 +89,6 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
         }
     }
 
-    private fun setFullScreenWindow() {
-        requireDialog().apply {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            window?.setLayout(width, height)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         (viewModel.observeCounters().value as? State.Success<List<CounterEntity>>)?.let { state ->
@@ -105,7 +97,20 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     override fun androidInjector(): AndroidInjector<Any> = injector
+
+    private fun setFullScreenWindow() {
+        requireDialog().apply {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            window?.setLayout(width, height)
+        }
+    }
 
     private fun provideViewModel() =  ViewModelProvider(
         this,

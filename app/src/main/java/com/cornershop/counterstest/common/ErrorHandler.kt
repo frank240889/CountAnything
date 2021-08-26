@@ -7,6 +7,7 @@ import retrofit2.HttpException
 import java.net.ConnectException
 import javax.inject.Inject
 
+@CustomAnnotations.OpenForTesting
 class ErrorHandler @Inject constructor(
     private val resourceManager: ResourceManager
 ) {

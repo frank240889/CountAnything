@@ -28,7 +28,7 @@
 
     <TextView
         android:id="@+id/tv_create_counter_fragment_title"
-        style="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_counter"
@@ -47,7 +47,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mb_create_counter_fragment_save_counter"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:textAppearance="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -96,7 +96,7 @@
         android:id="@+id/tv_create_counter_fragment_suggest_counter_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_marginTop="@dimen/margin_normal_3"
         android:layout_marginStart="@dimen/margin_normal_2"
         android:layout_marginEnd="@dimen/margin_normal_2"

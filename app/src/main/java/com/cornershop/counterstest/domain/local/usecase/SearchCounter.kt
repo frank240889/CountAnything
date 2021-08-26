@@ -3,12 +3,12 @@ package com.cornershop.counterstest.domain.local.usecase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import com.cornershop.counterstest.data.CounterRepository
+import com.cornershop.counterstest.data.AbstractCountRepository
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import javax.inject.Inject
 
 class SearchCounter @Inject constructor(
-    private val counterRepository: CounterRepository
+    private val counterRepository: AbstractCountRepository
 ): UseCase() {
 
     var title: String? = null

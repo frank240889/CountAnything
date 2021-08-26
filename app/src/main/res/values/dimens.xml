@@ -16,4 +16,5 @@
     <dimen name="small_rounded_shape">4dp</dimen>
     <dimen name="medium_rounded_shape">8dp</dimen>
     <dimen name="large_rounded_shape">16dp</dimen>
+    <dimen name="no_height">0dp</dimen>
 </resources>

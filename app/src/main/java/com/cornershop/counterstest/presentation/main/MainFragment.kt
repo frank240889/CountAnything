@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
-import com.cornershop.counterstest.common.AndroidNetworkChecker
 import com.cornershop.counterstest.common.ShareHelper
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.common.Utils.TEXT_PLAIN
@@ -30,9 +29,6 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
     companion object {
         fun newInstance() = MainFragment()
     }
-
-    @Inject
-    lateinit var androidNetworkChecker: AndroidNetworkChecker
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -108,15 +104,9 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
-    private fun setupRefreshLayout() {
-        binding.srlItemCounterRefresh.apply {
-            setOnRefreshListener {
-                viewModel.fetchCounters(true)
-            }
-            setColorSchemeColors(
-                ContextCompat.getColor(requireContext(), R.color.orange)
-            )
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     override fun showLoading(loading: Boolean) {
@@ -130,6 +120,17 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         this,
         viewModelFactory
     )[MainViewModel::class.java]
+
+    private fun setupRefreshLayout() {
+        binding.srlItemCounterRefresh.apply {
+            setOnRefreshListener {
+                viewModel.fetchCounters(true)
+            }
+            setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), R.color.orange)
+            )
+        }
+    }
 
     private fun setupRecyclerView() {
         binding.rvItemCounterList.apply {
