@@ -10,6 +10,9 @@ import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
 
+/**
+ * Implementation of [ExceptionHandler]
+ */
 @CustomAnnotations.OpenForTesting
 class ErrorHandler @Inject constructor(
     private val resourceManager: ResourceManager

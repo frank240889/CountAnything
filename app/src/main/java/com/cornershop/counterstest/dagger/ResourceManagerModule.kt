@@ -5,6 +5,9 @@ import com.cornershop.counterstest.interfaces.ResourceManager
 import dagger.Binds
 import dagger.Module
 
+/**
+ * This module provides the resource manager.
+ */
 @Module
 abstract class ResourceManagerModule {
 

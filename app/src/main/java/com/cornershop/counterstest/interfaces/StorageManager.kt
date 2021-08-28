@@ -1,5 +1,8 @@
-package com.cornershop.counterstest.common
+package com.cornershop.counterstest.interfaces
 
+/**
+ * Provides a simple way to store booleans.
+ */
 interface StorageManager {
     fun saveBoolean(key: String, value: Boolean)
 

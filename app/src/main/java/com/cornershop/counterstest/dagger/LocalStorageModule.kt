@@ -5,6 +5,9 @@ import com.cornershop.counterstest.data.local.database.CountersDatabase
 import dagger.Module
 import dagger.Provides
 
+/**
+ * This module provides the storage related dependencies.
+ */
 @Module
 class LocalStorageModule {
 

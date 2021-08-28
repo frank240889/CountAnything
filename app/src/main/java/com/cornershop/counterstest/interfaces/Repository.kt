@@ -1,11 +1,14 @@
-package com.cornershop.counterstest.data
+package com.cornershop.counterstest.interfaces
 
 import androidx.lifecycle.LiveData
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.CounterName
 
+/**
+ * A repository to fetch data.
+ */
 interface Repository {
-    suspend fun fetchCounters(forceRemoteFetching: Boolean = false)
+    suspend fun fetchCounters(forceRemoteFetching: Boolean = false): Int
 
     suspend fun createLocalCounter(counterName: CounterName)
 
@@ -15,5 +18,8 @@ interface Repository {
 
     suspend fun deleteCounter(counter: CounterEntity)
 
+    /**
+     * Returns a observable to stay pending when new updates are made.
+     */
     fun localCountersObservable(): LiveData<List<CounterEntity>>
 }

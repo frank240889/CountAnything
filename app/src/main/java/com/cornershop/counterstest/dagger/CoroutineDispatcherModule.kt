@@ -6,19 +6,15 @@ import dagger.Provides
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+/**
+ * This module provides the dispatchers for coroutines. As per Android docs, is good
+ * practice to inject the dispatcher to use instead of hardcoding
+ */
 @Module
 class CoroutineDispatcherModule {
     @CustomAnnotations.IODispatcher
     @Provides
     fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @CustomAnnotations.DefaultDispatcher
-    @Provides
-    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
-    @CustomAnnotations.UnconfinedDispatcher
-    @Provides
-    fun providesUnconfinedDispatcher(): CoroutineDispatcher = Dispatchers.Unconfined
 
     @CustomAnnotations.MainDispatcher
     @Provides

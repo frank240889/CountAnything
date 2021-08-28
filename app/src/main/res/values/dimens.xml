@@ -17,4 +17,6 @@
     <dimen name="medium_rounded_shape">8dp</dimen>
     <dimen name="large_rounded_shape">16dp</dimen>
     <dimen name="no_height">0dp</dimen>
+    <dimen name="large_bottom_padding">80dp</dimen>
+    <dimen name="min_height_edit_text">48dp</dimen>
 </resources>

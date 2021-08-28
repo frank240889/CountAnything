@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ErrorHandlerTest {
-    val context = ApplicationProvider.getApplicationContext<Context>()
+    private val context: Context = ApplicationProvider.getApplicationContext()
     private lateinit var resourceManager: ResourceManager
     private lateinit var errorHandler: ErrorHandler
 

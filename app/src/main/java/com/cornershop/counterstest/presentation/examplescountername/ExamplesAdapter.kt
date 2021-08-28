@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.cornershop.counterstest.R
 import com.google.android.material.chip.Chip
 
+/**
+ * The adapter for the examples name data.
+ */
 class ExamplesAdapter(
     private val listener: (String) -> Unit
 ): Adapter<ExamplesAdapter.ExamplesViewHolder>() {

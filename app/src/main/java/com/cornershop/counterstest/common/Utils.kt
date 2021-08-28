@@ -10,7 +10,14 @@ import java.util.concurrent.TimeoutException
 
 object Utils {
     const val TEXT_PLAIN = "text/plain"
+    const val DEFAULT_ANIMATION_TIME = 250L
+    const val OPAQUE = 1F
+    const val TRANSPARENT = 0F
+    const val COUNT = "count"
 
+    /**
+     * Method to add a observer to livedata and return its value in a sync way.
+     */
     fun <T> LiveData<T>.getOrAwaitValue(
         time: Long = 2,
         timeUnit: TimeUnit = TimeUnit.SECONDS
@@ -36,7 +43,9 @@ object Utils {
         return data as T
     }
 
-
+    /**
+     * Helper method to return a string from a [CounterEntity] list
+     */
     fun List<CounterEntity>.joinToStringWithDefault(): String {
         return this.joinToString(
             separator = "\n",

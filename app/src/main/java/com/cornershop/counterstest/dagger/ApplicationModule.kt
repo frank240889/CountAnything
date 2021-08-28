@@ -5,6 +5,9 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 
+/**
+ * The app module provides the application context.
+ */
 @Module
 class ApplicationModule {
 

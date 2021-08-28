@@ -7,6 +7,9 @@ import androidx.room.RoomDatabase
 import com.cornershop.counterstest.data.local.database.CountersDatabase.Companion.CURRENT_DATABASE_VERSION
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
+/**
+ * The room database to persist the remote data. Its implementation is managed by room.
+ */
 @Database(entities = [CounterEntity::class], version = CURRENT_DATABASE_VERSION, exportSchema = true)
 abstract class CountersDatabase: RoomDatabase() {
 

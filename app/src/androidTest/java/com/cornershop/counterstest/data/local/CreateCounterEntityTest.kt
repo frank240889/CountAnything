@@ -2,7 +2,6 @@ package com.cornershop.counterstest.data.local
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -16,11 +15,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 
 @RunWith(AndroidJUnit4::class)
-class WriteReadCounterEntityTest {
+class CreateCounterEntityTest {
 
     @get:Rule
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -28,12 +25,17 @@ class WriteReadCounterEntityTest {
     private lateinit var dao: CountersDao
     private lateinit var db: CountersDatabase
 
-    @Mock
-    lateinit var observer: Observer<List<CounterEntity>>
+    private val data: MutableList<CounterEntity> = mutableListOf(
+        CounterEntity("1234", "Example1", 0),
+        CounterEntity("4321", "Example2", 0),
+        CounterEntity("1324", "Example3", 0),
+        CounterEntity("1342", "Example4", 0),
+        CounterEntity("1423", "Example5", 0),
+        CounterEntity("1432", "Example6", 0)
+    )
 
     @Before
     fun setup() {
-        MockitoAnnotations.initMocks(this)
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(
             context, CountersDatabase::class.java).build()
@@ -41,11 +43,9 @@ class WriteReadCounterEntityTest {
     }
 
     @Test
-    fun write_counter_and_read_from_db() {
-        val data = listOf(CounterEntity("1234", "Example", 0))
+    fun verify_insertion_is_correct() {
         dao.insert(data)
-        dao.counters().observeForever(observer)
-        assert(dao.counters().getOrAwaitValue().size == 1)
+        assert(dao.counters().getOrAwaitValue().size == data.size)
     }
 
     @After

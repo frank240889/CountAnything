@@ -18,18 +18,26 @@ import com.cornershop.counterstest.common.Utils.TEXT_PLAIN
 import com.cornershop.counterstest.databinding.MainFragmentBinding
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.presentation.BaseViewModelFragment
+import com.cornershop.counterstest.presentation.common.Action
 import com.cornershop.counterstest.presentation.common.CounterAdapter
 import com.cornershop.counterstest.presentation.createcounter.CreateCounterFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
 import com.cornershop.counterstest.presentation.searchcounter.SearchResultsFragment
 import javax.inject.Inject
 
+/**
+ * The main screen shows the counters list or messages depending on data empty or error
+ * while fetching it.
+ */
 class MainFragment : BaseViewModelFragment<MainViewModel>() {
 
     companion object {
         fun newInstance() = MainFragment()
     }
 
+    /**
+     * Helper object to share feature.
+     */
     @Inject
     lateinit var shareHelper: ShareHelper
 
@@ -55,6 +63,9 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         )
     }
 
+    /**
+     * The callback when action mode is enabled.
+     */
     private val actionModeCallback: ActionMode.Callback by lazy {
         object : ActionMode.Callback {
             override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -98,10 +109,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
 
     override fun onResume() {
         super.onResume()
-        (viewModel.observeCounters().value as? State.Success<List<CounterEntity>>)?.let { state ->
-            processCounters(state.value)
-            setHeaderText(state.value)
-        }
+        updateHeader()
     }
 
     override fun onDestroy() {
@@ -120,6 +128,13 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         this,
         viewModelFactory
     )[MainViewModel::class.java]
+
+    private fun updateHeader() {
+        (viewModel.observeCounters().value as? State.Success<List<CounterEntity>>)?.let { state ->
+            processCounters(state.value)
+            setHeaderText(state.value)
+        }
+    }
 
     private fun setupRefreshLayout() {
         binding.srlItemCounterRefresh.apply {
@@ -231,7 +246,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                             onButtonPressed = object: InformativeDialogFragment.OnButtonPressed {
                                 override fun onPositive() {
                                     viewModel.performAction(
-                                        CounterAdapter.Companion.Action.INCREMENT,
+                                        Action.INCREMENT,
                                         viewModel.currentIncrementCounter()
                                     )
                                 }
@@ -262,7 +277,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
                             onButtonPressed = object: InformativeDialogFragment.OnButtonPressed {
                                 override fun onPositive() {
                                     viewModel.performAction(
-                                        CounterAdapter.Companion.Action.DECREMENT,
+                                        Action.DECREMENT,
                                         viewModel.currentDecrementCounter()
                                     )
                                 }
@@ -283,6 +298,9 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
+    /**
+     * Updates the header text.
+     */
     private fun setHeaderText(value: List<CounterEntity>) {
         binding.tvMainFragmentHeader.text = if (value.isEmpty()) {
             ""
@@ -409,7 +427,7 @@ class MainFragment : BaseViewModelFragment<MainViewModel>() {
         }
     }
 
-    private fun handleOnLongClick(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
+    private fun handleOnLongClick(action: Action, counter: CounterEntity) {
         requireActivity().startActionMode(actionModeCallback)
         viewModel.performAction(action, counter)
         counter.checked = counter.checked.not()

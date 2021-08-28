@@ -20,7 +20,9 @@ import com.cornershop.counterstest.presentation.BaseViewModelFragment
 import com.cornershop.counterstest.presentation.dialogs.InformativeDialogFragment
 import com.cornershop.counterstest.presentation.examplescountername.ExamplesFragment
 
-
+/**
+ * The screen to create new counters.
+ */
 class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
 
     companion object {
@@ -79,7 +81,11 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
         _viewBinding = null
     }
 
-
+    /**
+     * Instead of using custom interfaces as callback to pass data between fragments, we use
+     * the way provided by the Android framework. Automatically will be unregistered when fragment
+     * lifecycle exits from on resume.
+     */
     private fun addFragmentCallback() {
         parentFragmentManager.setFragmentResultListener(
             NAME,
@@ -92,6 +98,9 @@ class CreateCounterFragment : BaseViewModelFragment<CreateCounterViewModel>() {
         )
     }
 
+    /**
+     * Set the style for the text "see examples."
+     */
     private fun setStyleSuggest() {
         val message = SpannableString(getString(R.string.create_counter_disclaimer)).apply {
             setSpan(object: ClickableSpan() {

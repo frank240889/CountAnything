@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
+/**
+ * The operations that can be performed to database.
+ */
 @Dao
 interface CountersDao {
 

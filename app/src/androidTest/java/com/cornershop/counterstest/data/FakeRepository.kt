@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.cornershop.counterstest.common.CustomAnnotations
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.CounterName
+import com.cornershop.counterstest.interfaces.Repository
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -12,8 +13,12 @@ class FakeRepository: Repository {
 
     private val fakeData = MutableLiveData<List<CounterEntity>>(emptyList())
 
-    override suspend fun fetchCounters(forceRemoteFetching: Boolean) {
-        fakeData.value = returnNewList(fakeData.value!!)
+    override suspend fun fetchCounters(forceRemoteFetching: Boolean): Int {
+        var dataSize= 0
+        fakeData.value = returnNewList(fakeData.value!!).apply {
+            dataSize = this.size
+        }
+        return dataSize
     }
 
     override suspend fun createLocalCounter(counterName: CounterName) {
@@ -58,9 +63,7 @@ class FakeRepository: Repository {
         counter.count = counter.count.inc()
         val newCounter = CounterEntity(counter.id, counter.title, counter.count)
         val newData = ArrayList(dataSource()).apply {
-            indexOfFirst { it.id == counter.id }.let {
-                set(it, newCounter)
-            }
+            set(indexOfFirst { it.id == counter.id }, newCounter)
         }
         fakeData.value = newData
     }
@@ -69,9 +72,7 @@ class FakeRepository: Repository {
         counter.count = counter.count.dec()
         val newCounter = CounterEntity(counter.id, counter.title, counter.count)
         val newData = ArrayList(dataSource()).apply {
-            indexOfFirst { it.id == counter.id }.let {
-                set(it, newCounter)
-            }
+            set(indexOfFirst { it.id == counter.id }, newCounter)
         }
         fakeData.value = newData
     }

@@ -1,10 +1,10 @@
 package com.cornershop.counterstest.presentation.main
 
 import androidx.lifecycle.ViewModel
-import com.cornershop.counterstest.data.local.cache.Cache
+import com.cornershop.counterstest.interfaces.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.local.usecase.*
-import com.cornershop.counterstest.presentation.common.CounterAdapter
+import com.cornershop.counterstest.presentation.common.Action
 import javax.inject.Inject
 
 open class MainViewModel @Inject constructor(
@@ -39,12 +39,12 @@ open class MainViewModel @Inject constructor(
         }
     }
 
-    fun performAction(action: CounterAdapter.Companion.Action, counter: CounterEntity) {
+    fun performAction(action: Action, counter: CounterEntity) {
         when (action) {
-            CounterAdapter.Companion.Action.INCREMENT -> {
+            Action.INCREMENT -> {
                 incrementCounter(counter)
             }
-            CounterAdapter.Companion.Action.DECREMENT -> {
+            Action.DECREMENT -> {
                 decrementCounter(counter)
             }
             else -> {

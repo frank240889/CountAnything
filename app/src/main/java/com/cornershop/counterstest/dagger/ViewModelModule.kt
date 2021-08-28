@@ -12,6 +12,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 
+/**
+ * The module to provide implementations for view models, instead of having a module
+ */
 @Module
 abstract class ViewModelModule {
 

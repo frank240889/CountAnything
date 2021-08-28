@@ -8,6 +8,9 @@ import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import javax.inject.Singleton
 
+/**
+ * The component to create the dependencies graph using the next modules.
+ */
 @Component(
     modules =[
         AndroidInjectionModule::class,
@@ -29,6 +32,9 @@ interface ApplicationComponent: AndroidInjector<CountAnythingApplication> {
     @Component.Builder
     interface Builder {
 
+        /**
+         *
+         */
         @BindsInstance
         fun application(application: Application): Builder
         fun build(): ApplicationComponent?

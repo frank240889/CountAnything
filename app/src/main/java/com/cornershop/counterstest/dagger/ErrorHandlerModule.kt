@@ -5,6 +5,9 @@ import com.cornershop.counterstest.interfaces.ExceptionHandler
 import dagger.Binds
 import dagger.Module
 
+/**
+ * The module that provide the error handler.
+ */
 @Module
 abstract class ErrorHandlerModule {
     @Binds

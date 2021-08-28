@@ -11,7 +11,7 @@
         <item name="android:textColorSecondary">@color/gray</item>
         <item name="android:textColorTertiary">@color/light_gray</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorSecondary</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="actionModeStyle">@style/ActionMode</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="windowActionModeOverlay">true</item>

@@ -6,6 +6,9 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
+/**
+ * The application class for this app.
+ */
 class CountAnythingApplication: Application(), HasAndroidInjector {
 
     @Inject

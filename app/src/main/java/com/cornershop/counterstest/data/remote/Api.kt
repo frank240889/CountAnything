@@ -5,6 +5,9 @@ import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.domain.remote.CounterName
 import retrofit2.http.*
 
+/**
+ * The point to make the request. Its implementation is managed by Retrofit.
+ */
 interface Api {
     @GET("/api/v1/counters")
     @Headers("Content-Type: application/json")

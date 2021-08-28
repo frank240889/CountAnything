@@ -10,6 +10,9 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
+/**
+ * Class to encapsulate the common functionality for derived classes.
+ */
 abstract class BaseViewModelFragment<VM: ViewModel> : Fragment(), HasAndroidInjector {
 
     @Inject

@@ -1,11 +1,14 @@
 package com.cornershop.counterstest.presentation.searchcounter
 
-import com.cornershop.counterstest.data.local.cache.Cache
+import com.cornershop.counterstest.interfaces.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.local.usecase.*
 import com.cornershop.counterstest.presentation.main.MainViewModel
 import javax.inject.Inject
 
+/**
+ * A child view model from main view model, exposes the search functionality.
+ */
 class SearchViewModel @Inject constructor(
     private val searchCounter: SearchCounter,
     getCounters: GetCounters,

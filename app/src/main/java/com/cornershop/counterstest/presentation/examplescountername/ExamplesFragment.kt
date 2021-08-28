@@ -45,8 +45,6 @@ class ExamplesFragment : BaseViewModelFragment<ExamplesViewModel>() {
         ExamplesAdapter(listener)
     }
 
-
-
     override val viewModel: ExamplesViewModel
         get() = provideViewModel()
     
@@ -140,8 +138,8 @@ class ExamplesFragment : BaseViewModelFragment<ExamplesViewModel>() {
 
     private fun goBackWithSelectedName(name: String) {
         parentFragmentManager.setFragmentResult(
-            CreateCounterFragment.NAME, // Same request key FragmentA used to register its listener
-            bundleOf(CreateCounterFragment.NAME to name) // The data to be passed to FragmentA
+            CreateCounterFragment.NAME, // The key used from caller fragment to identify this callback.
+            bundleOf(CreateCounterFragment.NAME to name) // The data to be passed to caller fragment
         )
         parentFragmentManager.popBackStack()
     }

@@ -6,6 +6,9 @@ import androidx.fragment.app.DialogFragment
 import com.cornershop.counterstest.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
+/**
+ * The dialog to show information.
+ */
 class InformativeDialogFragment: DialogFragment() {
 
     companion object {
@@ -51,9 +54,7 @@ class InformativeDialogFragment: DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            // Use the Builder class for convenient dialog construction
             return MaterialAlertDialogBuilder(it, R.style.ThemeCounters_RoundedAlertDialog).apply {
-
                 if (title.isNotEmpty() || title.isNotBlank()) {
                     setTitle(title)
                 }
@@ -85,6 +86,9 @@ class InformativeDialogFragment: DialogFragment() {
         this.callback = onButtonPressed
     }
 
+    /**
+     * Interface to respond to buttons.
+     */
     interface OnButtonPressed {
         fun onPositive(){}
         fun onNegative(){}

@@ -8,6 +8,9 @@ import com.cornershop.counterstest.interfaces.ResourceManager
 import java.util.*
 import javax.inject.Inject
 
+/**
+ * Th view model that provides the examples names for counters.
+ */
 class ExamplesViewModel @Inject constructor(
     private val resourceManager: ResourceManager
 ) : ViewModel() {
@@ -31,7 +34,6 @@ class ExamplesViewModel @Inject constructor(
         _topic2.value = createData(getHeader(R.string.topic_2), getArray(R.array.food_array))
         _topic3.value = createData(getHeader(R.string.topic_3), getArray(R.array.misc_array))
     }
-
 
     private fun getHeader(id: Int) = resourceManager.getString(id)
 

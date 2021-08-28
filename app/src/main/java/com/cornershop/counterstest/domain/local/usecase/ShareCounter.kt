@@ -5,7 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.cornershop.counterstest.common.State
 import com.cornershop.counterstest.common.Utils.joinToStringWithDefault
-import com.cornershop.counterstest.data.local.cache.Cache
+import com.cornershop.counterstest.interfaces.Cache
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import javax.inject.Inject
 

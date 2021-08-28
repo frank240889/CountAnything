@@ -3,7 +3,7 @@ package com.cornershop.counterstest.domain.local
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
-import com.cornershop.counterstest.common.CounterValidator
+import com.cornershop.counterstest.common.CounterNameValidator
 import com.cornershop.counterstest.common.ErrorHandler
 import com.cornershop.counterstest.common.ResourceManagerImpl
 import com.cornershop.counterstest.common.TestCoroutineRule
@@ -41,13 +41,13 @@ class UseCasesTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
 
-    lateinit var repository: FakeRepository
+    private lateinit var repository: FakeRepository
 
-    lateinit var errorHandler: ErrorHandler
+    private lateinit var errorHandler: ErrorHandler
 
-    lateinit var counterValidator: CounterValidator
+    private lateinit var counterNameValidator: CounterNameValidator
 
-    lateinit var cache: InMemoryCache
+    private lateinit var cache: InMemoryCache
 
     private lateinit var createCounter: CreateCounter
     private lateinit var deleteCounter: DeleteCounter
@@ -60,9 +60,9 @@ class UseCasesTest {
         Dispatchers.setMain(testDispatcher)
         cache = InMemoryCache()
         repository = FakeRepository()
-        counterValidator = CounterValidator()
+        counterNameValidator = CounterNameValidator()
         errorHandler = ErrorHandler(ResourceManagerImpl(context))
-        createCounter = CreateCounter(testDispatcher, repository, errorHandler, counterValidator)
+        createCounter = CreateCounter(testDispatcher, repository, errorHandler, counterNameValidator)
         deleteCounter = DeleteCounter(testDispatcher, repository, errorHandler, cache)
         incrementCounter = IncrementCounter(testDispatcher, repository, errorHandler)
         decrementCounter = DecrementCounter(testDispatcher, repository, errorHandler)

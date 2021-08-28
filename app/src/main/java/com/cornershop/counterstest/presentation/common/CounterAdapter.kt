@@ -15,14 +15,21 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
+import com.cornershop.counterstest.common.Utils.COUNT
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
 
+/**
+ * The component to transform model data into view.
+ */
 class CounterAdapter(
     private val onClickListener: (Action, CounterEntity) -> Unit,
     private val onLongClickListener: ((Action, CounterEntity) -> Unit)? = null
 
 ): RecyclerView.Adapter<CounterAdapter.CounterViewHolder>() {
 
+    /**
+     * Callback to merge 2 list into one
+     */
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CounterEntity>() {
             override fun areItemsTheSame(oldItem: CounterEntity, newItem: CounterEntity) =
@@ -33,8 +40,10 @@ class CounterAdapter(
 
             override fun getChangePayload(oldItem: CounterEntity, newItem: CounterEntity): Any? {
                 return if (newItem.id == oldItem.id) {
+                    // Update only the view associated with the data that changed, avoiding updating
+                        // all view holder and make it seem "flickering"
                     Bundle().apply {
-                        putString("count", newItem.count.toString())
+                        putString(COUNT, newItem.count.toString())
                     }
                 }
                 else {
@@ -43,11 +52,6 @@ class CounterAdapter(
             }
         }
 
-        enum class Action {
-            INCREMENT,
-            DECREMENT,
-            MULTISELECT
-        }
     }
 
     private var actionMode: Boolean = false
@@ -135,6 +139,7 @@ class CounterAdapter(
         }
 
         override fun onClick(v: View?) {
+            // Action mode active? set item checked and pass to callback.
             if (actionMode) {
                 diffUtil.currentList[adapterPosition].let {
                     it.checked = it.checked.not()
@@ -152,12 +157,13 @@ class CounterAdapter(
         }
 
         fun update(bundle: Bundle) {
-            bundle["count"]?.let { count ->
+            bundle[COUNT]?.let { count ->
                 tvCounter.text = count.toString()
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
+            // action mode is enabled? then ignore the long click event.
             if (!actionMode) {
                 onLongClickListener?.invoke(Action.MULTISELECT, diffUtil.currentList[adapterPosition])
                 notifyItemChanged(adapterPosition)
@@ -165,4 +171,5 @@ class CounterAdapter(
             return true
         }
     }
+
 }

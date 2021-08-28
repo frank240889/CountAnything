@@ -7,6 +7,9 @@ import com.cornershop.counterstest.presentation.searchcounter.SearchResultsFragm
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
+/**
+ * This module creates an injector for those fragments.
+ */
 @Module
 abstract class FragmentModule {
 

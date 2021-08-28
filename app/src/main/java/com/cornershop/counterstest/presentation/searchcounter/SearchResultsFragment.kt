@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
 import com.cornershop.counterstest.common.State
+import com.cornershop.counterstest.common.Utils.DEFAULT_ANIMATION_TIME
+import com.cornershop.counterstest.common.Utils.OPAQUE
+import com.cornershop.counterstest.common.Utils.TRANSPARENT
 import com.cornershop.counterstest.common.ViewModelFactory
 import com.cornershop.counterstest.databinding.SearchResultFragmentBinding
 import com.cornershop.counterstest.domain.local.entities.CounterEntity
@@ -30,6 +33,9 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
+/**
+ * Represent the screen to search counters.
+ */
 class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
 
     companion object {
@@ -84,9 +90,6 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
         setFullScreenWindow()
         setupRecyclerView()
         setupListeners()
-        binding.mtSearchResultFragmentToolbar.setNavigationOnClickListener {
-            dismiss()
-        }
     }
 
     override fun onResume() {
@@ -118,7 +121,7 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
     )[SearchViewModel::class.java]
 
     private fun setupRecyclerView() {
-        binding.incSearchResultFragmentCounterList.rvItemCounterList.apply {
+        binding.llCounterList.rvItemCounterList.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = countersAdapter
         }
@@ -127,22 +130,24 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
     private fun setupListeners() {
         binding.tietSearchResultFragmentSearchInput.doOnTextChanged { text, _, _, _ ->
             binding.apply {
-                if (clSearchResultFragmentContainerResults.alpha == 0f) {
+                if (clSearchResultFragmentContainerResults.alpha == TRANSPARENT) {
                     clSearchResultFragmentContainerResults.animate()
-                        .setDuration(100)
-                        .alpha(1f)
+                        .setDuration(DEFAULT_ANIMATION_TIME)
+                        .alpha(OPAQUE)
                         .withStartAction {
                             clSearchResultFragmentContainerResults.background = ColorDrawable(Color.WHITE)
                             clSearchResultFragmentContainerResults.visibility = VISIBLE
                         }
                 }
                 viewModel.search(text.toString())
+                mtSearchResultFragmentToolbar.setNavigationOnClickListener {
+                    dismiss()
+                }
             }
         }
     }
 
     private fun addObservers() {
-
         viewModel.apply {
             observeSearchResults().observe(this@SearchResultsFragment) { data ->
                 processCounters(data)

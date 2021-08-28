@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import javax.inject.Inject
 
+/**
+ * Helper class to create and request to OS to handle it.
+ */
 class ShareHelper @Inject constructor(){
     fun share(content: String, mimeType: String, context: Context) {
         val sendIntent: Intent = Intent().apply {

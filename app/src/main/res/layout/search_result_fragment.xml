@@ -34,7 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:hint="@string/search_counters" />
+                android:inputType="text"
+                android:hint="@string/search_counters"
+                android:minHeight="@dimen/min_height_edit_text" />
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -57,15 +59,17 @@
         android:alpha="0"
         android:visibility="invisible"
         tools:context=".presentation.MainActivity">
-        <include
-            android:id="@+id/inc_search_result_fragment_counter_list"
-            layout="@layout/counter_list"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <TextView
+            android:id="@+id/tv_search_result_header"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_search_result_header"
-            app:layout_constraintVertical_bias="1.0"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="4 items 17 times" />
+
         <include
             android:id="@+id/ll_counter_list"
             layout="@layout/counter_list"
@@ -73,12 +77,12 @@
             android:layout_height="0dp"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/margin_normal_3"
+            android:layout_marginTop="@dimen/margin_normal_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_search_result_header"
-            app:layout_constraintVertical_bias="1.0"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_search_result_header" />
 
         <TextView
             android:id="@+id/tv_search_result_title_no_counters"
@@ -93,16 +97,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tv_search_result_header"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal_1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="4 items 17 times" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

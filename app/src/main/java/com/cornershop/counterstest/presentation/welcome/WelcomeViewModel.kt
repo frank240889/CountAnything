@@ -1,9 +1,12 @@
 package com.cornershop.counterstest.presentation.welcome
 
 import androidx.lifecycle.ViewModel
-import com.cornershop.counterstest.common.StorageManager
+import com.cornershop.counterstest.interfaces.StorageManager
 import javax.inject.Inject
 
+/**
+ * Simple view model for welcome screen.
+ */
 class WelcomeViewModel @Inject constructor(
     private val storeManager: StorageManager
 ): ViewModel() {

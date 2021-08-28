@@ -6,22 +6,29 @@ import com.cornershop.counterstest.domain.local.entities.CounterEntity
 import com.cornershop.counterstest.domain.remote.Counter
 import com.cornershop.counterstest.domain.remote.CounterId
 import com.cornershop.counterstest.domain.remote.CounterName
+import com.cornershop.counterstest.interfaces.Repository
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * The repository from which the app takes de data. Is the implementation for [Repository]
+ */
 @Singleton
 class CounterRepository @Inject constructor(
     private val api: Api,
     private val dao: CountersDao
 ): Repository {
 
-    override suspend fun fetchCounters(forceRemoteFetching: Boolean) {
+    override suspend fun fetchCounters(forceRemoteFetching: Boolean): Int {
+        var dataSize = 0
         clearAll()
         if (forceRemoteFetching || localCount() == 0) {
             fetchRemoteCounters().apply {
+                dataSize = this.size
                 insertCounters(this)
             }
         }
+        return dataSize
     }
 
     override suspend fun createLocalCounter(counterName: CounterName) {

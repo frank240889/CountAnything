@@ -12,6 +12,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+/**
+ * The module to create and provide dependencies related to API.
+ */
 @Module
 class ApiModule {
 
@@ -52,5 +55,5 @@ class ApiModule {
 
 
     @Provides
-    fun providesApiService(retrofit: Retrofit) = retrofit.create(Api::class.java)
+    fun providesApiService(retrofit: Retrofit): Api = retrofit.create(Api::class.java)
 }

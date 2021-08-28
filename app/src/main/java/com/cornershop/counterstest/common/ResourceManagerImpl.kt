@@ -6,6 +6,9 @@ import androidx.annotation.StringRes
 import com.cornershop.counterstest.interfaces.ResourceManager
 import javax.inject.Inject
 
+/**
+ * Implementation of [ResourceManager]
+ */
 class ResourceManagerImpl @Inject constructor(
     private val context: Context
 ): ResourceManager {

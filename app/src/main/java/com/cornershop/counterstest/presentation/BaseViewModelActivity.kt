@@ -10,6 +10,9 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
+/**
+ * Class to encapsulate the common functionality for derived classes.
+ */
 abstract class BaseViewModelActivity<VM: ViewModel> : AppCompatActivity(), HasAndroidInjector {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory

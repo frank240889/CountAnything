@@ -7,7 +7,7 @@ import com.cornershop.counterstest.databinding.ActivityWelcomeBinding
 import com.cornershop.counterstest.presentation.BaseViewModelActivity
 import com.cornershop.counterstest.presentation.MainActivity
 
-class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
+class WelcomeActivity : BaseViewModelActivity<WelcomeViewModel>() {
 
     override val viewModel: WelcomeViewModel
         get() = ViewModelProvider(
@@ -22,7 +22,7 @@ class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
         viewBinding = ActivityWelcomeBinding.inflate(layoutInflater).apply {
             setContentView(this.root)
         }
-
+        // Check if flag exist to show welcome screen one time only.
         if (!viewModel.skipWelcomeScreen()) {
             viewBinding.layoutActivityWelcomeContent.buttonStart.setOnClickListener {
                 viewModel.setSkipWelcomeScreen()
@@ -41,6 +41,4 @@ class WelcomeActivity() : BaseViewModelActivity<WelcomeViewModel>() {
     private fun continueToMain() {
         startActivity(getContinueIntent())
     }
-
-
 }
