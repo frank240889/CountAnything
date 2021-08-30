@@ -90,6 +90,9 @@ class SearchResultsFragment : DialogFragment(), HasAndroidInjector {
         setFullScreenWindow()
         setupRecyclerView()
         setupListeners()
+        binding.mtSearchResultFragmentToolbar.setNavigationOnClickListener {
+            dismiss()
+        }
     }
 
     override fun onResume() {
